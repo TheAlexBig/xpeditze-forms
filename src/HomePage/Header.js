@@ -41,7 +41,7 @@ export default function Header(props) {
                 width: 42,
               }}
             >
-              C
+              X
             </Box>
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
               <Box sx={{ alignItems: 'baseline', display: 'flex', gap: 0.75 }}>

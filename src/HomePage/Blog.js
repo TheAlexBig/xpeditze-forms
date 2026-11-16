@@ -49,7 +49,7 @@ const quickLinks = [
 export default function Blog() {
   return (
     <>
-      <Header title="Central Docs" />
+      <Header title="Xpeditze" />
       <Box
         component="main"
         sx={{

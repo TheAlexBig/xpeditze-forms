@@ -1,9 +1,9 @@
 {
-  "short_name": "Central Docs",
-  "name": "Central Docs | Documentos legales",
+  "short_name": "Xpeditze",
+  "name": "Xpeditze | Documentos legales",
   "icons": [
     {
-      "src": "central-docs-icon.svg",
+      "src": "xpeditze-icon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     }

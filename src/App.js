@@ -141,7 +141,7 @@ const App = () => {
               >
                 <CircularProgress size={32} />
                 <Typography color="text.secondary">
-                  Preparando Central Docs...
+                  Preparando Xpeditze...
                 </Typography>
               </Box>
             }

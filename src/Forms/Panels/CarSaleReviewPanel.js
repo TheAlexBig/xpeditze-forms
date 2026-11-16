@@ -20,7 +20,7 @@ export default function CarSaleReviewPanel({
     <DocumentReviewPanel
       {...panelProps}
       message={message}
-      storageMessage="Al descargar, Central Docs guardará este documento en el historial."
+      storageMessage="Al descargar, Xpeditze guardará este documento en el historial."
     >
       <CarSaleReview data={documentData} onEdit={onEdit} />
     </DocumentReviewPanel>

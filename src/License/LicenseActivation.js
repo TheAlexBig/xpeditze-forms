@@ -43,7 +43,7 @@ export default function LicenseActivation({
                 Activación requerida
               </Typography>
               <Typography component="h1" variant="h4">
-                Active Central Docs
+                Active Xpeditze
               </Typography>
               <Typography color="text.secondary" sx={{ mt: 1 }}>
                 Envíe el código de este equipo al proveedor e importe el archivo
@@ -91,7 +91,7 @@ export default function LicenseActivation({
             </Button>
             <Typography color="text.secondary" variant="body2">
               La licencia es permanente para este equipo y se conservará al
-              actualizar Central Docs.
+              actualizar Xpeditze.
             </Typography>
           </Stack>
         </Paper>

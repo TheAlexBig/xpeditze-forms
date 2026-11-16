@@ -1,10 +1,10 @@
-# Central Docs Web
+# Xpeditze Web
 
 React application for generating Salvadoran legal documents through guided
 forms. It supports vehicle purchase-and-sale agreements and simple mutual
 agreements with notarial authentication.
 
-Central Docs is licensed under the [Apache License 2.0](LICENSE). See the
+Xpeditze is licensed under the [Apache License 2.0](LICENSE). See the
 [privacy policy](PRIVACY.md), [security policy](SECURITY.md), and
 [code signing policy](CODE_SIGNING_POLICY.md).
 
@@ -17,7 +17,7 @@ npm start
 
 The web application is built with Vite and requires Node.js 18 or newer.
 
-During development, Vite proxies `/api` calls to the Central Docs API at
+During development, Vite proxies `/api` calls to the Xpeditze API at
 `http://127.0.0.1:8080`. Override it only when using a different API:
 
 ```bash
@@ -30,7 +30,7 @@ The `/compra-venta` wizard gathers the notary, buyer, vehicle, seller, and
 signing details. The last screen provides a review before calling
 `POST /api/v1/documents/car-sale/history` and downloading Word or PDF.
 
-The browser interface sends form data only to the configured Central Docs API.
+The browser interface sends form data only to the configured Xpeditze API.
 In the packaged desktop application that API runs locally and stores selected
 people, vehicles, agents, document history, and generated documents on the
 user's computer as described in the privacy policy.

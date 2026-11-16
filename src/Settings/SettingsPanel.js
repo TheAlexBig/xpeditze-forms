@@ -298,7 +298,7 @@ const UpdateManager = ({ info, status, busy, check }) => (
             >
               {status.updateAvailable
                 ? `Nueva versión disponible: ${status.latestVersion}`
-                : 'Central Docs está actualizado.'}
+                : 'Xpeditze está actualizado.'}
             </Typography>
           )}
         </Box>
@@ -512,7 +512,7 @@ const SettingsPanel = ({ settingsProps }) => {
     <Box>
       <SectionHeader
         title="Configuración"
-        description="Elige una categoría para administrar Central Docs."
+        description="Elige una categoría para administrar Xpeditze."
       />
       {settingsProps.error && (
         <Alert severity="error" sx={{ mb: 2 }}>

@@ -5,7 +5,7 @@ import Header from '../HomePage/Header';
 export default function GlobalPageLayout({ children }) {
   return (
     <>
-      <Header title="Central Docs" />
+      <Header title="Xpeditze" />
       <Box
         component="main"
         sx={{

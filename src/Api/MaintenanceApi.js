@@ -9,8 +9,7 @@ export async function downloadBackup() {
   const blob = await response.blob();
   const disposition = response.headers.get('content-disposition') || '';
   const name =
-    disposition.match(/filename="?([^";]+)"?/i)?.[1] ||
-    'central-docs-backup.zip';
+    disposition.match(/filename="?([^";]+)"?/i)?.[1] || 'xpeditze-backup.zip';
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;

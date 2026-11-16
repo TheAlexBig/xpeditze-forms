@@ -37,7 +37,7 @@ export default function DocumentWorkflowFrame({
       : Math.round(((activeStep + 1) / steps.length) * 100);
   return (
     <>
-      <Header title="Central Docs" />
+      <Header title="Xpeditze" />
       <Box
         component="main"
         sx={{

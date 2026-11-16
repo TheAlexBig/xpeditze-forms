@@ -22,7 +22,7 @@ export default function Footer() {
           py: 4,
         }}
       >
-        <Typography fontWeight={700}>Central Docs</Typography>
+        <Typography fontWeight={700}>Xpeditze</Typography>
         <Typography color="text.secondary" variant="body2">
           Generación guiada de documentos legales en formato Word y PDF.
         </Typography>

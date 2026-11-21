@@ -18,7 +18,12 @@ const personReviewData = (person) => ({
         domicilio: person.sociedad_domicilio,
         nit: person.sociedad_nit,
         cargo: person.sociedad_cargo,
-        personeria: person.sociedad_personeria,
+        personeria: [
+          person.sociedad_personeria_tipo,
+          person.sociedad_personeria,
+        ]
+          .filter(Boolean)
+          .join(': '),
       }
     : null,
 });

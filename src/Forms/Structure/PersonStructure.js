@@ -14,7 +14,8 @@ import Typography from '@mui/material/Typography';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { DataTerritorialDivision } from '../../Data/DataTerritorialDivision';
-import { formatDui, normalizeDui } from '../PersonMemory';
+import { normalizeCatalogText } from '../../Functions/CatalogText';
+import { formatDui, formatNit, normalizeDui } from '../PersonMemory';
 import { PersonValidationSchema } from '../Validations/PersonValidationSchema';
 import {
   countFieldErrors,
@@ -67,7 +68,36 @@ const companyFields = [
   'sociedad_domicilio',
   'sociedad_nit',
   'sociedad_cargo',
+  'sociedad_personeria_tipo',
   'sociedad_personeria',
+];
+
+const nationalities = [
+  'Salvadoreña',
+  'Guatemalteca',
+  'Hondureña',
+  'Nicaragüense',
+  'Costarricense',
+  'Panameña',
+  'Mexicana',
+  'Estadounidense',
+  'Española',
+];
+
+const representativeCapacities = [
+  'Administrador Único y Representante Legal',
+  'Director Único y Representante Legal',
+  'Presidente de la Junta Directiva y Representante Legal',
+  'Apoderado General Administrativo',
+  'Apoderado Especial',
+];
+
+const authorityDocumentTypes = [
+  'Escritura de constitución',
+  'Credencial de elección',
+  'Poder general administrativo',
+  'Poder especial',
+  'Otro instrumento',
 ];
 
 const PersonStructure = ({
@@ -114,13 +144,23 @@ const PersonStructure = ({
         }),
         sociedad_nit: Yup.string().when('actua_por_sociedad', {
           is: true,
-          then: (schema) => schema.required('Campo requerido'),
+          then: (schema) =>
+            schema
+              .matches(
+                /^\d{4}-\d{6}-\d{3}-\d$/,
+                'Use el formato 0000-000000-000-0'
+              )
+              .required('Campo requerido'),
         }),
         sociedad_cargo: Yup.string().when('actua_por_sociedad', {
           is: true,
           then: (schema) => schema.required('Campo requerido'),
         }),
         sociedad_personeria: Yup.string().when('actua_por_sociedad', {
+          is: true,
+          then: (schema) => schema.required('Campo requerido'),
+        }),
+        sociedad_personeria_tipo: Yup.string().when('actua_por_sociedad', {
           is: true,
           then: (schema) => schema.required('Campo requerido'),
         }),
@@ -476,16 +516,38 @@ const PersonStructure = ({
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField
-                    {...fieldProps(
-                      'sociedad_nacionalidad',
-                      values,
-                      touched,
-                      errors
+                  <Autocomplete
+                    freeSolo
+                    inputValue={values.sociedad_nacionalidad || ''}
+                    onChange={(event, value) =>
+                      setFieldValue('sociedad_nacionalidad', value || '')
+                    }
+                    onInputChange={(event, value) =>
+                      setFieldValue('sociedad_nacionalidad', value)
+                    }
+                    options={nationalities}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        error={Boolean(
+                          touched.sociedad_nacionalidad &&
+                          errors.sociedad_nacionalidad
+                        )}
+                        helperText={
+                          touched.sociedad_nacionalidad &&
+                          errors.sociedad_nacionalidad
+                        }
+                        label="Nacionalidad de la sociedad"
+                        name="sociedad_nacionalidad"
+                        onBlur={(event) => {
+                          handleBlur(event);
+                          setFieldValue(
+                            'sociedad_nacionalidad',
+                            normalizeCatalogText(event.target.value)
+                          );
+                        }}
+                      />
                     )}
-                    label="Nacionalidad de la sociedad"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -493,7 +555,14 @@ const PersonStructure = ({
                     {...fieldProps('sociedad_nit', values, touched, errors)}
                     label="NIT de la sociedad"
                     onBlur={handleBlur}
-                    onChange={handleChange}
+                    onChange={(event) =>
+                      setFieldValue(
+                        'sociedad_nit',
+                        formatNit(event.target.value)
+                      )
+                    }
+                    inputProps={{ inputMode: 'numeric', maxLength: 17 }}
+                    placeholder="0000-000000-000-0"
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -582,13 +651,57 @@ const PersonStructure = ({
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={6}>
+                  <Autocomplete
+                    freeSolo
+                    inputValue={values.sociedad_cargo || ''}
+                    onChange={(event, value) =>
+                      setFieldValue('sociedad_cargo', value || '')
+                    }
+                    onInputChange={(event, value) =>
+                      setFieldValue('sociedad_cargo', value)
+                    }
+                    options={representativeCapacities}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        error={Boolean(
+                          touched.sociedad_cargo && errors.sociedad_cargo
+                        )}
+                        helperText={
+                          touched.sociedad_cargo && errors.sociedad_cargo
+                        }
+                        label="Cargo o calidad con que actúa"
+                        name="sociedad_cargo"
+                        onBlur={(event) => {
+                          handleBlur(event);
+                          setFieldValue(
+                            'sociedad_cargo',
+                            normalizeCatalogText(event.target.value)
+                          );
+                        }}
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
                   <TextField
-                    {...fieldProps('sociedad_cargo', values, touched, errors)}
-                    label="Cargo o calidad con que actúa"
+                    {...fieldProps(
+                      'sociedad_personeria_tipo',
+                      values,
+                      touched,
+                      errors
+                    )}
+                    label="Documento que acredita la representación"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Administrador Único y Representante Legal"
-                  />
+                    select
+                  >
+                    {authorityDocumentTypes.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
@@ -598,12 +711,12 @@ const PersonStructure = ({
                       touched,
                       errors
                     )}
-                    label="Documento que demuestra que puede firmar por la sociedad"
-                    minRows={4}
+                    label="Datos del documento de representación"
+                    minRows={3}
                     multiline
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Describa el instrumento, fecha, notario, inscripción, vigencia y facultades."
+                    placeholder="Número, fecha, notario, inscripción, vigencia y facultades."
                   />
                 </Grid>
               </Grid>

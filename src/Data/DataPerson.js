@@ -19,5 +19,6 @@ export const DataPerson = {
   sociedad_domicilio: '',
   sociedad_nit: '',
   sociedad_cargo: '',
+  sociedad_personeria_tipo: '',
   sociedad_personeria: '',
 };

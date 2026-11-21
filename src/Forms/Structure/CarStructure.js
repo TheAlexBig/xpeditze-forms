@@ -8,6 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { normalizeCatalogText } from '../../Functions/CatalogText';
 import { CarValidationSchema } from '../Validations/CarValidationSchema';
 import {
   countFieldErrors,
@@ -53,7 +54,10 @@ const autocompleteField = (
         helperText={touched[name] && errors[name]}
         label={label}
         name={name}
-        onBlur={handleBlur}
+        onBlur={(event) => {
+          handleBlur(event);
+          setFieldValue(name, normalizeCatalogText(event.target.value));
+        }}
       />
     )}
   />

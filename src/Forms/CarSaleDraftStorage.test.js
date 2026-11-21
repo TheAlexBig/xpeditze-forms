@@ -25,7 +25,7 @@ describe('car sale draft storage', () => {
       '2026-08-24T03:00:00Z'
     );
     expect(readCarSaleDraft(storage)).toEqual({
-      schemaVersion: 3,
+      schemaVersion: 4,
       state: { carStates: { placa: 'P123' } },
       savedAt: '2026-08-24T03:00:00Z',
     });

@@ -123,6 +123,7 @@ describe('createCarSalePayload', () => {
         sociedad_domicilio: 'San Salvador',
         sociedad_nit: '0614-310124-106-5',
         sociedad_cargo: 'Administrador Único por 7 años',
+        sociedad_personeria_tipo: 'Credencial de elección',
         sociedad_personeria: 'Escritura número 446, libro 4885',
       },
       personStates: {},

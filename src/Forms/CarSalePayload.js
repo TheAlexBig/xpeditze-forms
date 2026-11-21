@@ -52,7 +52,11 @@ export const createCompanyPayload = (person) =>
         ),
         nit: toLegalIdentifier(person.sociedad_nit),
         cargo_representante: replaceNumericSequences(person.sociedad_cargo),
-        personeria: replaceNumericSequences(person.sociedad_personeria),
+        personeria: replaceNumericSequences(
+          [person.sociedad_personeria_tipo, person.sociedad_personeria]
+            .filter(Boolean)
+            .join(': ')
+        ),
       }
     : null;
 

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
@@ -5,7 +6,13 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { DataTerritorialDivision } from '../../Data/DataTerritorialDivision';
 import { AgentValidationSchema } from '../Validations/AgentValidationSchema';
-import { FieldGroup, FormActions, FormHeading } from './FormScaffold';
+import {
+  countFieldErrors,
+  fieldsAreComplete,
+  FormActions,
+  FormHeading,
+  ProgressiveFieldGroup,
+} from './FormScaffold';
 
 const initialAgent = {
   nombres: '',
@@ -35,157 +42,200 @@ const agentSummary = (values) => [
   { label: 'Carnet', value: values.carnet },
 ];
 
+const identityFields = ['nombres', 'apellidos', 'rol', 'genero'];
+const domicileFields = ['departamento', 'municipio', 'distrito'];
+
+const identityIsComplete = (values) =>
+  fieldsAreComplete(values, identityFields) &&
+  (!['Notario', 'Abogado'].includes(values.rol) || Boolean(values.carnet));
+
 const AgentStructure = ({
   agent,
   buttons,
   submitAction,
   allowedRoles = ['Notario', 'Abogado', 'Asistente', 'Escriba', 'Otro'],
-}) => (
-  <Formik
-    enableReinitialize
-    initialValues={{ ...initialAgent, ...(agent || {}) }}
-    onSubmit={submitAction}
-    validationSchema={Yup.object().shape(AgentValidationSchema)}
-  >
-    {({
-      values,
-      touched,
-      errors,
-      handleChange,
-      handleBlur,
-      handleSubmit,
-      setFieldValue,
-    }) => (
-      <form onSubmit={handleSubmit} noValidate>
-        <FormHeading
-          title={agent ? 'Editar persona' : 'Nueva persona'}
-          description="Registre profesionales y colaboradores que participan en la preparación o autorización de documentos."
-          eyebrow="Profesional o colaborador"
-          summary={agentSummary(values)}
-        />
-        <FieldGroup title="Información de la persona" accent="#17695d">
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                {...fieldProps('nombres', values, touched, errors)}
-                label="Nombres"
-                onBlur={handleBlur}
-                onChange={handleChange}
-              />
+}) => {
+  const [activeGroup, setActiveGroup] = useState('identity');
+
+  return (
+    <Formik
+      enableReinitialize
+      initialValues={{ ...initialAgent, ...(agent || {}) }}
+      onSubmit={submitAction}
+      validationSchema={Yup.object().shape(AgentValidationSchema)}
+    >
+      {({
+        values,
+        touched,
+        errors,
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        submitCount,
+        setFieldValue,
+      }) => (
+        <form onSubmit={handleSubmit} noValidate>
+          <FormHeading
+            title={agent ? 'Editar persona' : 'Nueva persona'}
+            description="Registre profesionales y colaboradores que participan en la preparación o autorización de documentos."
+            eyebrow="Profesional o colaborador"
+            summary={agentSummary(values)}
+          />
+          <ProgressiveFieldGroup
+            id="identity"
+            title="Información de la persona"
+            accent="#17695d"
+            complete={identityIsComplete(values)}
+            errorCount={countFieldErrors(
+              errors,
+              [...identityFields, 'carnet'],
+              touched,
+              submitCount > 0
+            )}
+            expanded={activeGroup === 'identity'}
+            onSelect={setActiveGroup}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  {...fieldProps('nombres', values, touched, errors)}
+                  label="Nombres"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  {...fieldProps('apellidos', values, touched, errors)}
+                  label="Apellidos"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  {...fieldProps('carnet', values, touched, errors)}
+                  label={
+                    ['Notario', 'Abogado'].includes(values.rol)
+                      ? 'Carnet'
+                      : 'Carnet (opcional)'
+                  }
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  {...fieldProps('rol', values, touched, errors)}
+                  label="Rol"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  select
+                >
+                  {allowedRoles.map((role) => (
+                    <MenuItem key={role} value={role}>
+                      {role}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  {...fieldProps('genero', values, touched, errors)}
+                  label="Género"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  select
+                >
+                  <MenuItem value="Femenino">Femenino</MenuItem>
+                  <MenuItem value="Masculino">Masculino</MenuItem>
+                </TextField>
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                {...fieldProps('apellidos', values, touched, errors)}
-                label="Apellidos"
-                onBlur={handleBlur}
-                onChange={handleChange}
-              />
+          </ProgressiveFieldGroup>
+          <ProgressiveFieldGroup
+            id="domicile"
+            title="Domicilio"
+            description="Seleccione la división territorial correspondiente."
+            accent="#2f7c70"
+            complete={fieldsAreComplete(values, domicileFields)}
+            errorCount={countFieldErrors(
+              errors,
+              domicileFields,
+              touched,
+              submitCount > 0
+            )}
+            expanded={activeGroup === 'domicile'}
+            onSelect={setActiveGroup}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  {...fieldProps('departamento', values, touched, errors)}
+                  label="Departamento"
+                  onBlur={handleBlur}
+                  onChange={(event) => {
+                    handleChange(event);
+                    setFieldValue('municipio', '');
+                    setFieldValue('distrito', '');
+                  }}
+                  select
+                >
+                  {Object.keys(DataTerritorialDivision).map((option) => (
+                    <MenuItem value={option} key={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  {...fieldProps('municipio', values, touched, errors)}
+                  disabled={!values.departamento}
+                  label="Municipio"
+                  onBlur={handleBlur}
+                  onChange={(event) => {
+                    handleChange(event);
+                    setFieldValue('distrito', '');
+                  }}
+                  select
+                >
+                  {Object.keys(
+                    DataTerritorialDivision[values.departamento] || {}
+                  ).map((option) => (
+                    <MenuItem value={option} key={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  {...fieldProps('distrito', values, touched, errors)}
+                  disabled={!values.municipio}
+                  label="Distrito"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  select
+                >
+                  {(
+                    DataTerritorialDivision[values.departamento]?.[
+                      values.municipio
+                    ] || []
+                  ).map((option) => (
+                    <MenuItem value={option} key={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                {...fieldProps('carnet', values, touched, errors)}
-                label={
-                  ['Notario', 'Abogado'].includes(values.rol)
-                    ? 'Carnet'
-                    : 'Carnet (opcional)'
-                }
-                onBlur={handleBlur}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                {...fieldProps('rol', values, touched, errors)}
-                label="Rol"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                select
-              >
-                {allowedRoles.map((role) => (
-                  <MenuItem key={role} value={role}>
-                    {role}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                {...fieldProps('genero', values, touched, errors)}
-                label="Género"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                select
-              >
-                <MenuItem value="Femenino">Femenino</MenuItem>
-                <MenuItem value="Masculino">Masculino</MenuItem>
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                {...fieldProps('departamento', values, touched, errors)}
-                label="Departamento"
-                onBlur={handleBlur}
-                onChange={(event) => {
-                  handleChange(event);
-                  setFieldValue('municipio', '');
-                  setFieldValue('distrito', '');
-                }}
-                select
-              >
-                {Object.keys(DataTerritorialDivision).map((option) => (
-                  <MenuItem value={option} key={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                {...fieldProps('municipio', values, touched, errors)}
-                disabled={!values.departamento}
-                label="Municipio"
-                onBlur={handleBlur}
-                onChange={(event) => {
-                  handleChange(event);
-                  setFieldValue('distrito', '');
-                }}
-                select
-              >
-                {Object.keys(
-                  DataTerritorialDivision[values.departamento] || {}
-                ).map((option) => (
-                  <MenuItem value={option} key={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                {...fieldProps('distrito', values, touched, errors)}
-                disabled={!values.municipio}
-                label="Distrito"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                select
-              >
-                {(
-                  DataTerritorialDivision[values.departamento]?.[
-                    values.municipio
-                  ] || []
-                ).map((option) => (
-                  <MenuItem value={option} key={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-          </Grid>
-        </FieldGroup>
-        <FormActions buttons={buttons} />
-      </form>
-    )}
-  </Formik>
-);
+          </ProgressiveFieldGroup>
+          <FormActions buttons={buttons} />
+        </form>
+      )}
+    </Formik>
+  );
+};
 
 export default AgentStructure;

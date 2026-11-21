@@ -1,3 +1,6 @@
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -121,6 +124,109 @@ export function FieldGroup({
         {children}
       </Box>
     </Box>
+  );
+}
+
+export const countFieldErrors = (
+  errors,
+  fields,
+  touched = {},
+  showAll = false
+) =>
+  fields.filter(
+    (field) => Boolean(errors[field]) && (showAll || Boolean(touched[field]))
+  ).length;
+
+export const fieldsAreComplete = (values, fields) =>
+  fields.every((field) => {
+    const value = values[field];
+    return value !== undefined && value !== null && String(value).trim() !== '';
+  });
+
+export function ProgressiveFieldGroup({
+  id,
+  title,
+  description,
+  children,
+  accent = '#17695d',
+  expanded,
+  onSelect,
+  errorCount = 0,
+  complete = false,
+  optional = false,
+}) {
+  const status = errorCount
+    ? { color: 'error', label: `Revisar ${errorCount}` }
+    : complete
+      ? { color: 'success', label: 'Completo' }
+      : optional
+        ? { color: 'default', label: 'Opcional' }
+        : { color: 'default', label: 'Pendiente' };
+
+  return (
+    <Accordion
+      disableGutters
+      expanded={expanded}
+      onChange={() => onSelect(id)}
+      sx={{
+        border: '1px solid',
+        borderColor: errorCount ? 'error.main' : 'divider',
+        borderRadius: '8px !important',
+        boxShadow: 'none',
+        mb: 1.5,
+        overflow: 'hidden',
+        '&:before': { display: 'none' },
+      }}
+    >
+      <AccordionSummary
+        aria-controls={`${id}-content`}
+        expandIcon={<Typography aria-hidden="true">⌄</Typography>}
+        id={`${id}-header`}
+        sx={{
+          bgcolor: expanded ? '#f4f8f5' : 'background.paper',
+          minHeight: 64,
+          px: { xs: 1.5, sm: 2 },
+          '& .MuiAccordionSummary-content': { my: 1.25 },
+        }}
+      >
+        <Stack
+          alignItems={{ xs: 'flex-start', sm: 'center' }}
+          direction={{ xs: 'column', sm: 'row' }}
+          justifyContent="space-between"
+          spacing={1}
+          sx={{ mr: 1, width: '100%' }}
+        >
+          <Stack direction="row" spacing={1.5} sx={{ minWidth: 0 }}>
+            <Box
+              sx={{
+                bgcolor: accent,
+                borderRadius: 1,
+                flexShrink: 0,
+                height: 8,
+                mt: 0.8,
+                width: 8,
+              }}
+            />
+            <Box sx={{ minWidth: 0 }}>
+              <Typography fontWeight={700}>{title}</Typography>
+              {description && (
+                <Typography color="text.secondary" variant="body2">
+                  {description}
+                </Typography>
+              )}
+            </Box>
+          </Stack>
+          <Chip color={status.color} label={status.label} size="small" />
+        </Stack>
+      </AccordionSummary>
+      <AccordionDetails
+        aria-labelledby={`${id}-header`}
+        id={`${id}-content`}
+        sx={{ bgcolor: '#f8faf7', p: { xs: 1.5, sm: 2.25 } }}
+      >
+        {children}
+      </AccordionDetails>
+    </Accordion>
   );
 }
 

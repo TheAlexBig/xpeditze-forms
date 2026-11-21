@@ -9,7 +9,13 @@ import TextField from '@mui/material/TextField';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { CarValidationSchema } from '../Validations/CarValidationSchema';
-import { FieldGroup, FormActions, FormHeading } from './FormScaffold';
+import {
+  countFieldErrors,
+  fieldsAreComplete,
+  FormActions,
+  FormHeading,
+  ProgressiveFieldGroup,
+} from './FormScaffold';
 
 const fieldProps = (name, values, touched, errors) => ({
   error: Boolean(touched[name] && errors[name]),
@@ -105,6 +111,10 @@ const carSummary = (values) => [
   { label: 'Color', value: values.color },
 ];
 
+const identificationFields = ['placa', 'fabricado', 'marca', 'modelo'];
+const classificationFields = ['clase', 'tipo', 'color', 'dominio'];
+const registrationFields = ['num_motor', 'num_chasis', 'num_vin'];
+
 const CarStructure = ({
   data,
   title,
@@ -118,6 +128,7 @@ const CarStructure = ({
     modelsByBrand: {},
   },
 }) => {
+  const [activeGroup, setActiveGroup] = useState('identification');
   const [notAvailable, setNotAvailable] = useState({
     motor: data.num_motor === 'N/T',
     chasis: data.num_chasis === 'N/T',
@@ -146,6 +157,7 @@ const CarStructure = ({
         handleChange,
         handleBlur,
         handleSubmit,
+        submitCount,
         setFieldValue,
       }) => (
         <form onSubmit={handleSubmit} noValidate>
@@ -160,7 +172,20 @@ const CarStructure = ({
               {error}
             </Alert>
           )}
-          <FieldGroup title="Identificación del vehículo" accent="#2f7c70">
+          <ProgressiveFieldGroup
+            id="identification"
+            title="Identificación del vehículo"
+            accent="#2f7c70"
+            complete={fieldsAreComplete(values, identificationFields)}
+            errorCount={countFieldErrors(
+              errors,
+              identificationFields,
+              touched,
+              submitCount > 0
+            )}
+            expanded={activeGroup === 'identification'}
+            onSelect={setActiveGroup}
+          >
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -211,8 +236,21 @@ const CarStructure = ({
                 )}
               </Grid>
             </Grid>
-          </FieldGroup>
-          <FieldGroup title="Clasificación y propiedad" accent="#b37d24">
+          </ProgressiveFieldGroup>
+          <ProgressiveFieldGroup
+            id="classification"
+            title="Clasificación y propiedad"
+            accent="#b37d24"
+            complete={fieldsAreComplete(values, classificationFields)}
+            errorCount={countFieldErrors(
+              errors,
+              classificationFields,
+              touched,
+              submitCount > 0
+            )}
+            expanded={activeGroup === 'classification'}
+            onSelect={setActiveGroup}
+          >
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -275,8 +313,9 @@ const CarStructure = ({
                 </TextField>
               </Grid>
             </Grid>
-          </FieldGroup>
-          <FieldGroup
+          </ProgressiveFieldGroup>
+          <ProgressiveFieldGroup
+            id="capacity"
             title="Capacidad del vehículo"
             description={
               isHeavyTruck(values.clase)
@@ -284,6 +323,36 @@ const CarStructure = ({
                 : 'Indique la capacidad y la unidad registradas para el vehículo.'
             }
             accent="#52766e"
+            complete={fieldsAreComplete(
+              values,
+              isHeavyTruck(values.clase)
+                ? [
+                    'ejes',
+                    'tara',
+                    'tipo_capacidad',
+                    'cap_carga',
+                    'cap_maxima',
+                    'traccion',
+                  ]
+                : ['capacidad', 'unidad_capacidad']
+            )}
+            errorCount={countFieldErrors(
+              errors,
+              isHeavyTruck(values.clase)
+                ? [
+                    'ejes',
+                    'tara',
+                    'tipo_capacidad',
+                    'cap_carga',
+                    'cap_maxima',
+                    'traccion',
+                  ]
+                : ['capacidad', 'unidad_capacidad', 'traccion'],
+              touched,
+              submitCount > 0
+            )}
+            expanded={activeGroup === 'capacity'}
+            onSelect={setActiveGroup}
           >
             <Grid container spacing={2}>
               {!isHeavyTruck(values.clase) && (
@@ -354,11 +423,21 @@ const CarStructure = ({
                 />
               </Grid>
             </Grid>
-          </FieldGroup>
-          <FieldGroup
+          </ProgressiveFieldGroup>
+          <ProgressiveFieldGroup
+            id="registration"
             title="Números registrales"
             description="Marque “No consta” únicamente cuando el dato no aparezca en la documentación."
             accent="#8a6540"
+            complete={fieldsAreComplete(values, registrationFields)}
+            errorCount={countFieldErrors(
+              errors,
+              registrationFields,
+              touched,
+              submitCount > 0
+            )}
+            expanded={activeGroup === 'registration'}
+            onSelect={setActiveGroup}
           >
             <Grid container spacing={2}>
               {[
@@ -399,7 +478,7 @@ const CarStructure = ({
                 </Grid>
               ))}
             </Grid>
-          </FieldGroup>
+          </ProgressiveFieldGroup>
           <FormActions buttons={buttons} />
         </form>
       )}

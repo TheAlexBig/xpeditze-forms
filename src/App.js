@@ -49,7 +49,14 @@ const App = () => {
   const reviewData = createCarSaleReviewData(state);
 
   const personSubmit = async (values) => {
-    const saved = await peopleMemory.savePersonMemory(values);
+    const saved = await peopleMemory.savePersonMemory(
+      Object.fromEntries(
+        Object.entries(values).filter(
+          ([key]) =>
+            key !== 'actua_por_sociedad' && !key.startsWith('sociedad_')
+        )
+      )
+    );
     if (!saved) {
       return false;
     }
@@ -58,7 +65,14 @@ const App = () => {
   };
 
   const vendorSubmit = async (values) => {
-    const saved = await peopleMemory.savePersonMemory(values);
+    const saved = await peopleMemory.savePersonMemory(
+      Object.fromEntries(
+        Object.entries(values).filter(
+          ([key]) =>
+            key !== 'actua_por_sociedad' && !key.startsWith('sociedad_')
+        )
+      )
+    );
     if (!saved) {
       return false;
     }

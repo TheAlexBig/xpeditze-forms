@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  hasSameCompanyNit,
   hasSamePartyDui,
   isNotary,
   validateCarSaleState,
@@ -9,6 +10,21 @@ describe('car sale business rules', () => {
   it('accepts only notaries as authenticating agents', () => {
     expect(isNotary({ rol: 'Notario' })).toBe(true);
     expect(isNotary({ rol: 'Abogado' })).toBe(false);
+  });
+
+  it('compares represented companies by normalized NIT', () => {
+    expect(
+      hasSameCompanyNit(
+        { actua_por_sociedad: true, sociedad_nit: '0614-010101-001-1' },
+        { actua_por_sociedad: true, sociedad_nit: '0614 010101 001 1' }
+      )
+    ).toBe(true);
+    expect(
+      hasSameCompanyNit(
+        { actua_por_sociedad: false, sociedad_nit: '0614-010101-001-1' },
+        { actua_por_sociedad: true, sociedad_nit: '0614-010101-001-1' }
+      )
+    ).toBe(false);
   });
 
   it('compares buyer and seller by normalized DUI', () => {

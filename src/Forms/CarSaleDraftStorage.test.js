@@ -25,7 +25,7 @@ describe('car sale draft storage', () => {
       '2026-08-24T03:00:00Z'
     );
     expect(readCarSaleDraft(storage)).toEqual({
-      schemaVersion: 2,
+      schemaVersion: 3,
       state: { carStates: { placa: 'P123' } },
       savedAt: '2026-08-24T03:00:00Z',
     });
@@ -45,7 +45,7 @@ describe('car sale draft storage', () => {
     storage.setItem(
       CAR_SALE_AUTOSAVE_KEY,
       JSON.stringify({
-        schemaVersion: 1,
+        schemaVersion: 2,
         state: { carStates: { placa: 'P123' } },
         savedAt: '2026-08-24T03:00:00Z',
       })

@@ -29,6 +29,9 @@ describe('createCarSaleReviewData', () => {
         apellido: 'Garcia Valladares',
         fecha_nacimiento: '1985-12-21',
         documento: '05404679-9',
+        actua_por_sociedad: true,
+        sociedad_nombre: 'Solaristmo, S.A. de C.V.',
+        sociedad_nit: '0614-310124-106-5',
       },
       carStates: {
         placa: 'P-23233',
@@ -48,6 +51,7 @@ describe('createCarSaleReviewData', () => {
     expect(review.comprador.documento).toBe('12321323-2');
     expect(review.comprador.fecha_nacimiento).toBe('1991-03-09');
     expect(review.vendedor.fecha_nacimiento).toBe('1985-12-21');
+    expect(review.vendedor.sociedad.nombre).toBe('Solaristmo, S.A. de C.V.');
     expect(review.preparado_por.nombre).toBe('Andrea');
     expect(review.agente_juridico.nombre).toBe('Fiora');
     expect(review.vehiculo.placa).toBe('P-23233');

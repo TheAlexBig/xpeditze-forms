@@ -3,7 +3,12 @@ import Alert from '@mui/material/Alert';
 import Autocomplete from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 import MenuItem from '@mui/material/MenuItem';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { Formik } from 'formik';
@@ -18,7 +23,7 @@ const fieldProps = (name, values, touched, errors) => ({
   error: Boolean(touched[name] && errors[name]),
   helperText: touched[name] && errors[name],
   name,
-  value: values[name],
+  value: values[name] ?? '',
   fullWidth: true,
 });
 
@@ -62,6 +67,39 @@ const PersonStructure = ({
     onSubmit={submitAction}
     validationSchema={Yup.object().shape({
       ...PersonValidationSchema,
+      actua_por_sociedad: Yup.boolean(),
+      sociedad_nombre: Yup.string().when('actua_por_sociedad', {
+        is: true,
+        then: (schema) => schema.required('Campo requerido'),
+      }),
+      sociedad_nacionalidad: Yup.string().when('actua_por_sociedad', {
+        is: true,
+        then: (schema) => schema.required('Campo requerido'),
+      }),
+      sociedad_departamento: Yup.string().when('actua_por_sociedad', {
+        is: true,
+        then: (schema) => schema.required('Campo requerido'),
+      }),
+      sociedad_municipio: Yup.string().when('actua_por_sociedad', {
+        is: true,
+        then: (schema) => schema.required('Campo requerido'),
+      }),
+      sociedad_domicilio: Yup.string().when('actua_por_sociedad', {
+        is: true,
+        then: (schema) => schema.required('Campo requerido'),
+      }),
+      sociedad_nit: Yup.string().when('actua_por_sociedad', {
+        is: true,
+        then: (schema) => schema.required('Campo requerido'),
+      }),
+      sociedad_cargo: Yup.string().when('actua_por_sociedad', {
+        is: true,
+        then: (schema) => schema.required('Campo requerido'),
+      }),
+      sociedad_personeria: Yup.string().when('actua_por_sociedad', {
+        is: true,
+        then: (schema) => schema.required('Campo requerido'),
+      }),
       documento: PersonValidationSchema.documento.test(
         'different-party-dui',
         'Los comparecientes deben tener DUI diferentes',
@@ -286,6 +324,199 @@ const PersonStructure = ({
               />
             )}
           />
+        </FieldGroup>
+        <FieldGroup
+          title="Representación de sociedad"
+          description="Active esta opción cuando la persona comparece en nombre de una sociedad."
+          accent="#52766e"
+        >
+          <FormControl component="fieldset">
+            <FormLabel component="legend">
+              ¿Esta persona firma en nombre de una sociedad?
+            </FormLabel>
+            <RadioGroup
+              name="actua_por_sociedad"
+              onChange={(event) => {
+                setFieldValue(
+                  'actua_por_sociedad',
+                  event.target.value === 'si'
+                );
+              }}
+              row
+              value={values.actua_por_sociedad ? 'si' : 'no'}
+            >
+              <FormControlLabel
+                control={<Radio />}
+                label="No, firma en nombre propio"
+                value="no"
+              />
+              <FormControlLabel
+                control={<Radio />}
+                label="Sí, representa una sociedad"
+                value="si"
+              />
+            </RadioGroup>
+          </FormControl>
+          {values.actua_por_sociedad && (
+            <Grid container spacing={2} sx={{ mt: 0.5 }}>
+              <Grid item xs={12}>
+                <Alert severity="info">
+                  Tenga a la mano el NIT de la sociedad y el documento que
+                  acredita el cargo, la vigencia y las facultades de quien
+                  firma.
+                </Alert>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography fontWeight={700} variant="subtitle2">
+                  Datos de la sociedad
+                </Typography>
+                <Typography color="text.secondary" variant="body2">
+                  Copie estos datos del NIT o de la escritura de constitución.
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={8}>
+                <TextField
+                  {...fieldProps('sociedad_nombre', values, touched, errors)}
+                  label="Denominación o razón social"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  {...fieldProps(
+                    'sociedad_abreviatura',
+                    values,
+                    touched,
+                    errors
+                  )}
+                  label="Nombre abreviado (opcional)"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  {...fieldProps(
+                    'sociedad_nacionalidad',
+                    values,
+                    touched,
+                    errors
+                  )}
+                  label="Nacionalidad de la sociedad"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  {...fieldProps('sociedad_nit', values, touched, errors)}
+                  label="NIT de la sociedad"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  {...fieldProps(
+                    'sociedad_departamento',
+                    values,
+                    touched,
+                    errors
+                  )}
+                  label="Departamento de la sociedad"
+                  onBlur={handleBlur}
+                  onChange={(event) => {
+                    handleChange(event);
+                    setFieldValue('sociedad_municipio', '');
+                    setFieldValue('sociedad_domicilio', '');
+                  }}
+                  select
+                >
+                  {Object.keys(DataTerritorialDivision).map((option) => (
+                    <MenuItem value={option} key={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  {...fieldProps('sociedad_municipio', values, touched, errors)}
+                  disabled={!values.sociedad_departamento}
+                  label="Municipio de la sociedad"
+                  onBlur={handleBlur}
+                  onChange={(event) => {
+                    handleChange(event);
+                    setFieldValue('sociedad_domicilio', '');
+                  }}
+                  select
+                >
+                  {Object.keys(
+                    DataTerritorialDivision[values.sociedad_departamento] || {}
+                  ).map((option) => (
+                    <MenuItem value={option} key={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  {...fieldProps('sociedad_domicilio', values, touched, errors)}
+                  disabled={!values.sociedad_municipio}
+                  label="Distrito de la sociedad"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  select
+                >
+                  {(
+                    DataTerritorialDivision[values.sociedad_departamento]?.[
+                      values.sociedad_municipio
+                    ] || []
+                  ).map((option) => (
+                    <MenuItem value={option} key={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography fontWeight={700} variant="subtitle2">
+                  Autorización para firmar
+                </Typography>
+                <Typography color="text.secondary" variant="body2">
+                  Indique por qué esta persona puede actuar en nombre de la
+                  sociedad.
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  {...fieldProps('sociedad_cargo', values, touched, errors)}
+                  label="Cargo o calidad con que actúa"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  placeholder="Administrador Único y Representante Legal"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  {...fieldProps(
+                    'sociedad_personeria',
+                    values,
+                    touched,
+                    errors
+                  )}
+                  label="Documento que demuestra que puede firmar por la sociedad"
+                  minRows={4}
+                  multiline
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  placeholder="Describa el instrumento, fecha, notario, inscripción, vigencia y facultades."
+                />
+              </Grid>
+            </Grid>
+          )}
         </FieldGroup>
         <FormActions buttons={buttons} />
       </form>

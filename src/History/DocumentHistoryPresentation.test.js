@@ -2,6 +2,34 @@ import { describe, expect, it } from 'vitest';
 import { presentDocumentHistory } from './DocumentHistoryPresentation';
 
 describe('document history presentation', () => {
+  it('uses represented companies as the car-sale parties', () => {
+    const presentation = presentDocumentHistory({
+      type: 'car-sale',
+      buyerName: 'Carlos Comprador',
+      sellerName: 'Solaristmo, S.A. de C.V.',
+      draft: {
+        personStates: {
+          nombre: 'Carlos',
+          apellido: 'Comprador',
+          documento: '00000000-1',
+        },
+        vendorStates: {
+          nombre: 'Jesús',
+          apellido: 'Representante',
+          documento: '00000000-2',
+          sociedad_nombre: 'Solaristmo, S.A. de C.V.',
+          sociedad_nit: '0614-310124-106-5',
+        },
+        carStates: { placa: 'P-123' },
+      },
+    });
+
+    expect(presentation.parties).toBe(
+      'Carlos Comprador / Solaristmo, S.A. de C.V.'
+    );
+    expect(presentation.searchableText).toContain('0614-310124-106-5');
+  });
+
   it('presents and indexes a mutual agreement', () => {
     const presentation = presentDocumentHistory({
       type: 'mutual',

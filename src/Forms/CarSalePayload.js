@@ -40,10 +40,31 @@ export const createVehiclePayload = (vehicle) => {
   };
 };
 
+export const createCompanyPayload = (person) =>
+  person.actua_por_sociedad
+    ? {
+        nombre: replaceNumericSequences(person.sociedad_nombre),
+        abreviatura: replaceNumericSequences(person.sociedad_abreviatura),
+        nacionalidad: replaceNumericSequences(person.sociedad_nacionalidad),
+        departamento: replaceNumericSequences(person.sociedad_departamento),
+        domicilio: replaceNumericSequences(
+          legalSettlement(person.sociedad_domicilio, person.sociedad_municipio)
+        ),
+        nit: toLegalIdentifier(person.sociedad_nit),
+        cargo_representante: replaceNumericSequences(person.sociedad_cargo),
+        personeria: replaceNumericSequences(person.sociedad_personeria),
+      }
+    : null;
+
+const createCarSalePartyPayload = (person) => ({
+  ...createPersonPayload(person),
+  sociedad: createCompanyPayload(person),
+});
+
 export function createCarSalePayload(state) {
   return {
-    vendedor: createPersonPayload(state.vendorStates),
-    comprador: createPersonPayload(state.personStates),
+    vendedor: createCarSalePartyPayload(state.vendorStates),
+    comprador: createCarSalePartyPayload(state.personStates),
     vehiculo: createVehiclePayload(state.carStates),
     documento: {
       calidad_de: replaceNumericSequences(state.detailStates.calidad_de),

@@ -7,6 +7,20 @@ const personReviewData = (person) => ({
   municipio: person.municipio,
   departamento: person.departamento,
   oficio: person.oficio,
+  actua_por_sociedad: Boolean(person.actua_por_sociedad),
+  sociedad: person.actua_por_sociedad
+    ? {
+        nombre: person.sociedad_nombre,
+        abreviatura: person.sociedad_abreviatura,
+        nacionalidad: person.sociedad_nacionalidad,
+        departamento: person.sociedad_departamento,
+        municipio: person.sociedad_municipio,
+        domicilio: person.sociedad_domicilio,
+        nit: person.sociedad_nit,
+        cargo: person.sociedad_cargo,
+        personeria: person.sociedad_personeria,
+      }
+    : null,
 });
 
 const agentReviewData = (agent = {}) => ({

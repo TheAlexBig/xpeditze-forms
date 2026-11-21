@@ -102,6 +102,46 @@ describe('createCarSalePayload', () => {
     expect(payload.vehiculo.capacidad).toBe('DOS TON');
   });
 
+  it('keeps the represented company separate from the appearing person', () => {
+    const payload = createCarSalePayload({
+      vendorStates: {
+        nombre: 'Jesús',
+        apellido: 'Álvarez',
+        departamento: 'San Salvador',
+        municipio: 'San Salvador Centro',
+        domicilio: 'San Salvador',
+        documento: '12345678-9',
+        genero: 'Masculino',
+        edad: '69',
+        oficio: 'Empleado',
+        actua_por_sociedad: true,
+        sociedad_nombre: 'Solaristmo, S.A. de C.V.',
+        sociedad_abreviatura: 'Solaristmo',
+        sociedad_nacionalidad: 'Salvadoreña',
+        sociedad_departamento: 'San Salvador',
+        sociedad_municipio: 'San Salvador Centro',
+        sociedad_domicilio: 'San Salvador',
+        sociedad_nit: '0614-310124-106-5',
+        sociedad_cargo: 'Administrador Único por 7 años',
+        sociedad_personeria: 'Escritura número 446, libro 4885',
+      },
+      personStates: {},
+      carStates: {},
+      detailStates: {},
+      agentStates: {},
+    });
+
+    expect(payload.vendedor.nombre).toBe('Jesús');
+    expect(payload.vendedor.sociedad.nombre).toBe('Solaristmo, S.A. de C.V.');
+    expect(payload.vendedor.sociedad.nit).toBe(
+      'CERO SEIS UNO CUATRO-TRES UNO CERO UNO DOS CUATRO-UNO CERO SEIS-CINCO'
+    );
+    expect(payload.vendedor.sociedad.cargo_representante).toBe(
+      'Administrador Único por SIETE años'
+    );
+    expect(payload.comprador.sociedad).toBeNull();
+  });
+
   it('renders decimal vehicle capacity as a measurement', () => {
     const payload = createCarSalePayload({
       vendorStates: {},

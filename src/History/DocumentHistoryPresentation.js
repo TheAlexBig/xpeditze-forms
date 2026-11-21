@@ -10,11 +10,19 @@ const carSalePresentation = (item) => {
   const vehicleDescription = [vehicle.marca, vehicle.modelo, vehicle.placa]
     .filter(Boolean)
     .join(' ');
+  const buyerName =
+    buyer.sociedad_nombre ||
+    [buyer.nombre, buyer.apellido].filter(Boolean).join(' ') ||
+    item.buyerName;
+  const sellerName =
+    seller.sociedad_nombre ||
+    [seller.nombre, seller.apellido].filter(Boolean).join(' ') ||
+    item.sellerName;
   return {
     title: vehicleDescription
       ? `Compra venta - ${vehicleDescription}`
       : item.title,
-    parties: `${[buyer.nombre, buyer.apellido].filter(Boolean).join(' ') || item.buyerName} / ${[seller.nombre, seller.apellido].filter(Boolean).join(' ') || item.sellerName}`,
+    parties: `${buyerName} / ${sellerName}`,
     responsible: {
       notary: [agent.nombres, agent.apellidos].filter(Boolean).join(' '),
       preparer: [preparer.nombres, preparer.apellidos]
@@ -29,9 +37,15 @@ const carSalePresentation = (item) => {
       buyer.nombre,
       buyer.apellido,
       buyer.documento,
+      buyer.sociedad_nombre,
+      buyer.sociedad_abreviatura,
+      buyer.sociedad_nit,
       seller.nombre,
       seller.apellido,
       seller.documento,
+      seller.sociedad_nombre,
+      seller.sociedad_abreviatura,
+      seller.sociedad_nit,
       vehicle.marca,
       vehicle.modelo,
       vehicle.placa,

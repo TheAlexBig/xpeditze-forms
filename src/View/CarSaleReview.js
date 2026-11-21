@@ -18,7 +18,20 @@ const personValues = (person) => [
   ['DUI', person.documento],
   ['Domicilio', place(person)],
   ['Oficio', person.oficio],
+  ...(person.sociedad
+    ? [
+        ['Sociedad representada', person.sociedad.nombre],
+        ['Nombre abreviado', person.sociedad.abreviatura || 'No indicado'],
+        ['NIT de la sociedad', person.sociedad.nit],
+        ['Nacionalidad', person.sociedad.nacionalidad],
+        ['Domicilio de la sociedad', place(person.sociedad)],
+        ['Cargo o calidad', person.sociedad.cargo],
+        ['Personería', person.sociedad.personeria, true],
+      ]
+    : []),
 ];
+
+const partyName = (person = {}) => person.sociedad?.nombre || fullName(person);
 
 const CarSaleReview = ({ data, onEdit }) => {
   const vehicleTitle =
@@ -50,7 +63,7 @@ const CarSaleReview = ({ data, onEdit }) => {
     {
       title: 'Comprador',
       accent: '#2f7c70',
-      summary: `${fullName(data.comprador)} / ${data.comprador.documento || emptyValue}`,
+      summary: `${partyName(data.comprador)} / ${data.comprador.documento || emptyValue}`,
       step: 1,
       values: personValues(data.comprador),
     },
@@ -80,7 +93,7 @@ const CarSaleReview = ({ data, onEdit }) => {
     {
       title: 'Vendedor',
       accent: '#8a6540',
-      summary: `${fullName(data.vendedor)} / ${data.vendedor.documento || emptyValue}`,
+      summary: `${partyName(data.vendedor)} / ${data.vendedor.documento || emptyValue}`,
       step: 3,
       values: personValues(data.vendedor),
     },
@@ -105,7 +118,7 @@ const CarSaleReview = ({ data, onEdit }) => {
   return (
     <Box>
       <ReviewSummary
-        title={`${data.vehiculo.placa || emptyValue} / ${fullName(data.vendedor)} a ${fullName(data.comprador)}`}
+        title={`${data.vehiculo.placa || emptyValue} / ${partyName(data.vendedor)} a ${partyName(data.comprador)}`}
         chips={[
           `Precio: ${data.documento.precio || emptyValue}`,
           `Firma: ${formatDate(data.documento.fecha_firma, emptyValue)}`,

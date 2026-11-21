@@ -11,7 +11,13 @@ import Typography from '@mui/material/Typography';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { DataTerritorialDivision } from '../../Data/DataTerritorialDivision';
-import { FieldGroup, FormActions, FormHeading } from './FormScaffold';
+import {
+  countFieldErrors,
+  fieldsAreComplete,
+  FormActions,
+  FormHeading,
+  ProgressiveFieldGroup,
+} from './FormScaffold';
 import { calculateMutualPreview } from '../MutualFinancialPreview';
 import MutualPaymentPlanSummary from './MutualPaymentPlanSummary';
 import { currentTimeValue, todayValue } from '../../Functions/DateTimeValues';
@@ -101,6 +107,7 @@ const field = (name, values, touched, errors) => ({
 });
 
 export default function MutualTermsStructure({ data, onSubmit, onBack }) {
+  const [activeGroup, setActiveGroup] = useState('capital');
   return (
     <Formik
       enableReinitialize
@@ -128,6 +135,7 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
         handleChange,
         handleBlur,
         handleSubmit,
+        submitCount,
         setFieldValue,
       }) => {
         const preview = calculateMutualPreview(values);
@@ -142,7 +150,37 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                 { label: 'Cuotas', value: values.installmentCount },
               ]}
             />
-            <FieldGroup title="Capital y forma de pago">
+            <ProgressiveFieldGroup
+              id="capital"
+              title="Capital y forma de pago"
+              complete={fieldsAreComplete(values, [
+                'amount',
+                'termMode',
+                'installmentCount',
+                'paymentBank',
+                'paymentAccount',
+                ...(values.termMode === 'SPECIFIC_DATE'
+                  ? ['dueDate']
+                  : ['termQuantity', 'termUnit']),
+              ])}
+              errorCount={countFieldErrors(
+                errors,
+                [
+                  'amount',
+                  'termMode',
+                  'termQuantity',
+                  'termUnit',
+                  'dueDate',
+                  'installmentCount',
+                  'paymentBank',
+                  'paymentAccount',
+                ],
+                touched,
+                submitCount > 0
+              )}
+              expanded={activeGroup === 'capital'}
+              onSelect={setActiveGroup}
+            >
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TextField
@@ -262,8 +300,21 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                 </Alert>
               )}
               {preview && <MutualPaymentPlanSummary preview={preview} />}
-            </FieldGroup>
-            <FieldGroup title="Intereses y destino" accent="#8a6540">
+            </ProgressiveFieldGroup>
+            <ProgressiveFieldGroup
+              id="interest"
+              title="Intereses y destino"
+              accent="#8a6540"
+              complete={fieldsAreComplete(values, ['fundsPurpose'])}
+              errorCount={countFieldErrors(
+                errors,
+                ['fundsPurpose', 'defaultInterest', 'administrativeExpenses'],
+                touched,
+                submitCount > 0
+              )}
+              expanded={activeGroup === 'interest'}
+              onSelect={setActiveGroup}
+            >
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <TextField
@@ -297,8 +348,26 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                   />
                 </Grid>
               </Grid>
-            </FieldGroup>
-            <FieldGroup title="Instrumento" accent="#2f7c70">
+            </ProgressiveFieldGroup>
+            <ProgressiveFieldGroup
+              id="instrument"
+              title="Instrumento"
+              accent="#2f7c70"
+              complete={fieldsAreComplete(
+                values,
+                values.instrumentType === 'PUBLIC_DEED'
+                  ? ['instrumentType', 'deedNumber']
+                  : ['instrumentType']
+              )}
+              errorCount={countFieldErrors(
+                errors,
+                ['instrumentType', 'deedNumber'],
+                touched,
+                submitCount > 0
+              )}
+              expanded={activeGroup === 'instrument'}
+              onSelect={setActiveGroup}
+            >
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TextField
@@ -327,8 +396,32 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                   </Grid>
                 )}
               </Grid>
-            </FieldGroup>
-            <FieldGroup title="Garantía" accent="#52766e">
+            </ProgressiveFieldGroup>
+            <ProgressiveFieldGroup
+              id="guarantee"
+              title="Garantía"
+              accent="#52766e"
+              complete={
+                fieldsAreComplete(values, ['guaranteeType']) &&
+                (!['MOVABLE', 'MORTGAGE'].includes(values.guaranteeType) ||
+                  Boolean(values.guaranteeDetails)) &&
+                (values.guaranteeType !== 'VEHICLE_PLEDGE' ||
+                  Boolean(values.pledgeValue))
+              }
+              errorCount={countFieldErrors(
+                errors,
+                [
+                  'guaranteeType',
+                  'guaranteeDetails',
+                  'pledgeValue',
+                  'guaranteeDueDate',
+                ],
+                touched,
+                submitCount > 0
+              )}
+              expanded={activeGroup === 'guarantee'}
+              onSelect={setActiveGroup}
+            >
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TextField
@@ -409,11 +502,33 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                   sx={{ mt: 2, maxWidth: 420 }}
                 />
               )}
-            </FieldGroup>
-            <FieldGroup
+            </ProgressiveFieldGroup>
+            <ProgressiveFieldGroup
+              id="signing"
               title="Lugar y momento de firma"
               description="Seleccione municipio y distrito según la reorganización territorial vigente."
               accent="#2f7c70"
+              complete={fieldsAreComplete(values, [
+                'signingState',
+                'signingMunicipality',
+                'signingDistrict',
+                'signingDate',
+                'signingTime',
+              ])}
+              errorCount={countFieldErrors(
+                errors,
+                [
+                  'signingState',
+                  'signingMunicipality',
+                  'signingDistrict',
+                  'signingDate',
+                  'signingTime',
+                ],
+                touched,
+                submitCount > 0
+              )}
+              expanded={activeGroup === 'signing'}
+              onSelect={setActiveGroup}
             >
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
@@ -526,11 +641,24 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                   </Grid>
                 </Grid>
               </Grid>
-            </FieldGroup>
-            <FieldGroup
+            </ProgressiveFieldGroup>
+            <ProgressiveFieldGroup
+              id="knowledge"
               title="Identificación ante notario"
               description="Indique si el notario conoce personalmente a cada compareciente."
               accent="#8a6540"
+              complete={fieldsAreComplete(values, [
+                'identifiesDebtor',
+                'identifiesCreditor',
+              ])}
+              errorCount={countFieldErrors(
+                errors,
+                ['identifiesDebtor', 'identifiesCreditor'],
+                touched,
+                submitCount > 0
+              )}
+              expanded={activeGroup === 'knowledge'}
+              onSelect={setActiveGroup}
             >
               <Grid container spacing={2}>
                 {[
@@ -567,7 +695,7 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                   </Grid>
                 ))}
               </Grid>
-            </FieldGroup>
+            </ProgressiveFieldGroup>
             <FormActions
               buttons={[
                 {
@@ -589,3 +717,4 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
     </Formik>
   );
 }
+import { useState } from 'react';

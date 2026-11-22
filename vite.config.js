@@ -1,4 +1,4 @@
-import { defineConfig, transformWithEsbuild } from 'vite';
+import { defineConfig, transformWithOxc } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
@@ -10,21 +10,11 @@ export default defineConfig({
         if (!/\/src\/.*\.js$/.test(id)) {
           return null;
         }
-        return transformWithEsbuild(code, id, {
-          loader: 'jsx',
-          jsx: 'automatic',
-        });
+        return transformWithOxc(code, id, { lang: 'jsx' });
       },
     },
     react(),
   ],
-  optimizeDeps: {
-    esbuildOptions: {
-      loader: {
-        '.js': 'jsx',
-      },
-    },
-  },
   server: {
     proxy: {
       '/api': 'http://127.0.0.1:8080',

@@ -30,7 +30,19 @@ const familyStatus = (party) => {
     : label;
 };
 const parent = (party, prefix) =>
-  [party[`${prefix}Name`], party[`${prefix}Job`], party[`${prefix}Settlement`]]
+  [
+    [party[`${prefix}Name`], party[`${prefix}LastName`]]
+      .filter(Boolean)
+      .join(' '),
+    party[`${prefix}Job`],
+    [
+      party[`${prefix}Settlement`],
+      party[`${prefix}Municipality`],
+      party[`${prefix}State`],
+    ]
+      .filter(Boolean)
+      .join(', '),
+  ]
     .filter(Boolean)
     .join(' · ');
 const partyGroups = (party) => [

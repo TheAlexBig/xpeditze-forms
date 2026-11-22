@@ -15,6 +15,12 @@ describe('marriage payload', () => {
     expect(payload.datos.lugar_celebracion).toBe(
       'San Salvador, Municipio de San Salvador Centro'
     );
+    expect(payload.contrayente_uno.madre).toEqual({
+      nombre: 'María Prueba',
+      oficio: 'Comerciante',
+      departamento: 'San Salvador',
+      domicilio: 'San Salvador, Municipio de San Salvador Centro',
+    });
     expect(payload.datos.hora_celebracion).toContain('DIECISÉIS');
     expect(payload.datos.numero_escritura).toBe(12);
     expect(payload.datos.regimen_patrimonial).toBe('COMMUNITY_DEFERRED');

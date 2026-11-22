@@ -477,6 +477,122 @@ const PersonFields = ({
   );
 };
 
+const ParentFields = ({
+  values,
+  setValues,
+  prefix,
+  title,
+  errors,
+  errorPrefix,
+}) => {
+  const field = (suffix) => `${prefix}${suffix}`;
+  const state = values[field('State')];
+  const municipality = values[field('Municipality')];
+  const municipalities = Object.keys(DataTerritorialDivision[state] || {});
+  const districts = DataTerritorialDivision[state]?.[municipality] || [];
+
+  return (
+    <>
+      <Grid size={12}>
+        <Typography color="text.secondary" fontWeight={700} variant="body2">
+          {title}
+        </Typography>
+      </Grid>
+      {[
+        [field('Name'), 'Nombres'],
+        [field('LastName'), 'Apellidos'],
+      ].map(([name, label]) => (
+        <Grid key={name} size={{ xs: 12, sm: 6 }}>
+          <TextField
+            fullWidth
+            required
+            label={label}
+            value={values[name]}
+            onChange={update(setValues, name)}
+            {...errorProps(errors, `${errorPrefix}.${name}`)}
+          />
+        </Grid>
+      ))}
+      <Grid size={12}>
+        <TextField
+          fullWidth
+          required
+          label="Profesión u oficio"
+          value={values[field('Job')]}
+          onChange={update(setValues, field('Job'))}
+          {...errorProps(errors, `${errorPrefix}.${field('Job')}`)}
+        />
+      </Grid>
+      <Grid size={{ xs: 12, sm: 4 }}>
+        <TextField
+          fullWidth
+          required
+          select
+          label="Departamento"
+          value={state}
+          onChange={(event) =>
+            setValues((current) => ({
+              ...current,
+              [field('State')]: event.target.value,
+              [field('Municipality')]: '',
+              [field('Settlement')]: '',
+            }))
+          }
+          {...errorProps(errors, `${errorPrefix}.${field('State')}`)}
+        >
+          {Object.keys(DataTerritorialDivision).map((option) => (
+            <MenuItem value={option} key={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Grid>
+      <Grid size={{ xs: 12, sm: 4 }}>
+        <TextField
+          fullWidth
+          required
+          select
+          disabled={!state}
+          label="Municipio"
+          value={municipality}
+          onChange={(event) =>
+            setValues((current) => ({
+              ...current,
+              [field('Municipality')]: event.target.value,
+              [field('Settlement')]: '',
+            }))
+          }
+          {...errorProps(errors, `${errorPrefix}.${field('Municipality')}`)}
+        >
+          {municipalities.map((option) => (
+            <MenuItem value={option} key={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Grid>
+      <Grid size={{ xs: 12, sm: 4 }}>
+        <TextField
+          fullWidth
+          required
+          select
+          disabled={!municipality}
+          label="Distrito"
+          value={values[field('Settlement')]}
+          onChange={update(setValues, field('Settlement'))}
+          {...errorProps(errors, `${errorPrefix}.${field('Settlement')}`)}
+        >
+          {districts.map((option) => (
+            <MenuItem value={option} key={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Grid>
+    </>
+  );
+};
+
 export function MarriagePartyStructure({
   title,
   values,
@@ -605,39 +721,36 @@ export function MarriagePartyStructure({
         ])}
         complete={valuesComplete(values, [
           'motherName',
+          'motherLastName',
           'motherJob',
+          'motherState',
+          'motherMunicipality',
           'motherSettlement',
           'fatherName',
+          'fatherLastName',
           'fatherJob',
+          'fatherState',
+          'fatherMunicipality',
           'fatherSettlement',
         ])}
       >
         <Grid container spacing={2}>
-          {[
-            ['motherName', 'Nombre de la madre'],
-            ['motherJob', 'Oficio de la madre'],
-            ['motherSettlement', 'Domicilio de la madre'],
-            ['fatherName', 'Nombre del padre'],
-            ['fatherJob', 'Oficio del padre'],
-            ['fatherSettlement', 'Domicilio del padre'],
-          ].map(([name, label]) => (
-            <Grid
-              key={name}
-              size={{
-                xs: 12,
-                sm: 4,
-              }}
-            >
-              <TextField
-                fullWidth
-                required
-                label={label}
-                value={values[name]}
-                onChange={update(setValues, name)}
-                {...errorProps(errors, `${errorPrefix}.${name}`)}
-              />
-            </Grid>
-          ))}
+          <ParentFields
+            values={values}
+            setValues={setValues}
+            prefix="mother"
+            title="Madre"
+            errors={errors}
+            errorPrefix={errorPrefix}
+          />
+          <ParentFields
+            values={values}
+            setValues={setValues}
+            prefix="father"
+            title="Padre"
+            errors={errors}
+            errorPrefix={errorPrefix}
+          />
         </Grid>
       </ProgressiveFieldGroup>
       <ProgressiveFieldGroup

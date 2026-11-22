@@ -12,9 +12,19 @@ import {
 } from './LegalPayload';
 
 const parentPayload = (party, prefix) => ({
-  nombre: replaceNumericSequences(party[prefix + 'Name']),
+  nombre: replaceNumericSequences(
+    [party[prefix + 'Name'], party[prefix + 'LastName']]
+      .filter(Boolean)
+      .join(' ')
+  ),
   oficio: replaceNumericSequences(party[prefix + 'Job']),
-  domicilio: replaceNumericSequences(party[prefix + 'Settlement']),
+  departamento: replaceNumericSequences(party[prefix + 'State']),
+  domicilio: replaceNumericSequences(
+    legalSettlement(
+      party[prefix + 'Settlement'],
+      party[prefix + 'Municipality']
+    )
+  ),
 });
 
 const partyPayload = (party) => ({

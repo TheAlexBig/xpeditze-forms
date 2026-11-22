@@ -25,7 +25,7 @@ describe('marriage draft storage', () => {
       '2026-09-08T12:00:00Z'
     );
     expect(readMarriageDraft(storage)).toEqual({
-      schemaVersion: 2,
+      schemaVersion: 3,
       state: { partyOne: { nombre: 'Ana' } },
       savedAt: '2026-09-08T12:00:00Z',
     });

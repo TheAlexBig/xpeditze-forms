@@ -33,14 +33,4 @@ if ! node_meets_requirement; then
 fi
 
 cd "${repository_dir}"
-
-echo "Verificando pruebas con un máximo de dos workers..."
-npm test -- --maxWorkers=2
-
-echo "Verificando ESLint..."
-npm run lint
-
-echo "Verificando la compilación de producción..."
-npm run build
-
-echo "Verificación del frontend completada."
+exec node scripts/verify.mjs

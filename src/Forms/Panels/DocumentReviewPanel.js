@@ -71,10 +71,12 @@ export default function DocumentReviewPanel({
       )}
       <Divider sx={{ mt: 3, mb: 2 }} />
       <Stack
-        alignItems={{ xs: 'stretch', md: 'center' }}
         direction={{ xs: 'column', md: 'row' }}
-        justifyContent="space-between"
         spacing={1.5}
+        sx={{
+          alignItems: { xs: 'stretch', md: 'center' },
+          justifyContent: 'space-between',
+        }}
       >
         <Typography color="text.secondary" variant="body2">
           {storageMessage}

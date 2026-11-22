@@ -22,10 +22,12 @@ export function ReviewSummary({ title, chips = [] }) {
       }}
     >
       <Stack
-        alignItems={{ xs: 'flex-start', md: 'center' }}
         direction={{ xs: 'column', md: 'row' }}
-        justifyContent="space-between"
         spacing={2}
+        sx={{
+          alignItems: { xs: 'flex-start', md: 'center' },
+          justifyContent: 'space-between',
+        }}
       >
         <Box sx={{ minWidth: 0 }}>
           <Typography color="text.secondary" fontWeight={650} variant="body2">
@@ -35,7 +37,7 @@ export function ReviewSummary({ title, chips = [] }) {
             {title}
           </Typography>
         </Box>
-        <Stack direction="row" flexWrap="wrap" gap={1}>
+        <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1 }}>
           {chips.map((chip) => (
             <Chip
               key={chip}
@@ -99,13 +101,15 @@ export function ReviewSection({
       }}
     >
       <Stack
-        alignItems={{ xs: 'flex-start', sm: 'center' }}
         direction={{ xs: 'column', sm: 'row' }}
-        justifyContent="space-between"
         spacing={1.5}
-        sx={{ mb: 2 }}
+        sx={{
+          alignItems: { xs: 'flex-start', sm: 'center' },
+          justifyContent: 'space-between',
+          mb: 2,
+        }}
       >
-        <Stack alignItems="center" direction="row" spacing={1.5}>
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
           <Box
             sx={{
               alignItems: 'center',

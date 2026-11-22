@@ -105,7 +105,7 @@ export default function MarriageReview({ data, onEdit }) {
   ];
   return (
     <Box>
-      <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 2 }}>
+      <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, mb: 2 }}>
         <Chip label="Acta prematrimonial" size="small" />
         <Chip label="Escritura matriz" size="small" />
         <Chip label="Control registral" size="small" />

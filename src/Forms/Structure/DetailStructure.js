@@ -115,12 +115,14 @@ const DetailStructure = ({ data, title, buttons, submitAction }) => {
               >
                 <TextField
                   {...fieldProps('precio', values, touched, errors)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">$</InputAdornment>
-                    ),
+                  slotProps={{
+                    htmlInput: { inputMode: 'decimal' },
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">$</InputAdornment>
+                      ),
+                    },
                   }}
-                  inputProps={{ inputMode: 'decimal' }}
                   label="Precio de venta"
                   onBlur={handleBlur}
                   onChange={(event) =>
@@ -277,8 +279,10 @@ const DetailStructure = ({ data, title, buttons, submitAction }) => {
                   <Grid size="grow">
                     <TextField
                       {...fieldProps('hora_firma', values, touched, errors)}
-                      InputLabelProps={{ shrink: true }}
-                      inputProps={{ step: 300 }}
+                      slotProps={{
+                        htmlInput: { step: 300 },
+                        inputLabel: { shrink: true },
+                      }}
                       label="Hora de firma"
                       onBlur={handleBlur}
                       onChange={handleChange}

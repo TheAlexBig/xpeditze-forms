@@ -228,8 +228,8 @@ const HistoryPanel = ({ historyProps, onLoad }) => {
                       <TableCell align="right" sx={{ minWidth: 265 }}>
                         <Stack
                           direction="row"
-                          justifyContent="flex-end"
                           spacing={0.5}
+                          sx={{ justifyContent: 'flex-end' }}
                         >
                           <Button
                             disabled={

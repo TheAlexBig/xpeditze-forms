@@ -71,15 +71,15 @@ export default function MutualPaymentPlanSummary({ preview }) {
       >
         {preview.installments.map((installment, index) => (
           <Stack
-            alignItems={{ xs: 'flex-start', sm: 'center' }}
             direction={{ xs: 'column', sm: 'row' }}
-            justifyContent="space-between"
             key={`${installment.date}-${index}`}
             spacing={0.5}
             sx={{
+              alignItems: { xs: 'flex-start', sm: 'center' },
               borderBottom:
                 index < preview.installments.length - 1 ? '1px solid' : 0,
               borderColor: 'divider',
+              justifyContent: 'space-between',
               px: 1.5,
               py: 1,
             }}

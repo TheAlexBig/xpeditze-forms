@@ -190,10 +190,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                 >
                   <TextField
                     {...field('amount', values, touched, errors)}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">$</InputAdornment>
-                      ),
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">$</InputAdornment>
+                        ),
+                      },
                     }}
                     label="Capital"
                     type="number"
@@ -308,7 +310,7 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                 >
                   <TextField
                     fullWidth
-                    InputProps={{ readOnly: true }}
+                    slotProps={{ input: { readOnly: true } }}
                     label="Valor inicial por cuota"
                     value={
                       preview ? `$${preview.installmentAmount.toFixed(2)}` : ''
@@ -543,10 +545,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                   >
                     <TextField
                       {...field('pledgeValue', values, touched, errors)}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">$</InputAdornment>
-                        ),
+                      slotProps={{
+                        input: {
+                          startAdornment: (
+                            <InputAdornment position="start">$</InputAdornment>
+                          ),
+                        },
                       }}
                       label="Valor convenido del vehículo"
                       type="number"
@@ -724,8 +728,10 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     <Grid size="grow">
                       <TextField
                         {...field('signingTime', values, touched, errors)}
-                        InputLabelProps={{ shrink: true }}
-                        inputProps={{ step: 300 }}
+                        slotProps={{
+                          htmlInput: { step: 300 },
+                          inputLabel: { shrink: true },
+                        }}
                         label="Hora de firma"
                         onBlur={handleBlur}
                         onChange={handleChange}

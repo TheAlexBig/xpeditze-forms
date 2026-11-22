@@ -60,11 +60,13 @@ export default function DocumentWorkflowFrame({
           }}
         >
           <Stack
-            alignItems={{ xs: 'stretch', md: 'flex-start' }}
             direction={{ xs: 'column', md: 'row' }}
-            justifyContent="space-between"
             spacing={2}
-            sx={{ mb: 2.5 }}
+            sx={{
+              alignItems: { xs: 'stretch', md: 'flex-start' },
+              justifyContent: 'space-between',
+              mb: 2.5,
+            }}
           >
             <Box>
               <Breadcrumbs sx={{ mb: 0.75 }} separator="/">
@@ -148,8 +150,7 @@ export default function DocumentWorkflowFrame({
                 </Typography>
                 <Stack
                   direction="row"
-                  justifyContent="space-between"
-                  sx={{ mb: 1 }}
+                  sx={{ justifyContent: 'space-between', mb: 1 }}
                 >
                   <Typography fontWeight={650} variant="body2">
                     Progreso

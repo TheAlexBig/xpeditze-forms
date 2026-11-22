@@ -213,7 +213,9 @@ const CarStructure = ({
               >
                 <TextField
                   {...fieldProps('fabricado', values, touched, errors)}
-                  inputProps={{ inputMode: 'numeric', maxLength: 4 }}
+                  slotProps={{
+                    htmlInput: { inputMode: 'numeric', maxLength: 4 },
+                  }}
                   label="Año de fabricación"
                   onBlur={handleBlur}
                   onChange={(event) => {
@@ -408,7 +410,7 @@ const CarStructure = ({
                 >
                   <TextField
                     {...fieldProps('capacidad', values, touched, errors)}
-                    inputProps={{ min: 0, step: '0.01' }}
+                    slotProps={{ htmlInput: { min: 0, step: '0.01' } }}
                     label="Capacidad"
                     onBlur={handleBlur}
                     onChange={handleChange}
@@ -456,7 +458,9 @@ const CarStructure = ({
                     >
                       <TextField
                         {...fieldProps(field, values, touched, errors)}
-                        inputProps={type === 'number' ? { min: 0 } : undefined}
+                        slotProps={{
+                          htmlInput: type === 'number' ? { min: 0 } : undefined,
+                        }}
                         label={label}
                         onBlur={handleBlur}
                         onChange={handleChange}
@@ -511,7 +515,7 @@ const CarStructure = ({
                 ['vin', 'num_vin', 'Número VIN'],
               ].map(([key, field, label]) => (
                 <Grid key={field} size={12}>
-                  <Grid container spacing={1.5} alignItems="center">
+                  <Grid container spacing={1.5} sx={{ alignItems: 'center' }}>
                     <Grid
                       size={{
                         xs: 12,

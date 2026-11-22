@@ -223,12 +223,18 @@ const TemplateManager = ({ documentType, documentLabel }) => {
             return (
               <SurfaceRow key={template.name}>
                 <Stack
-                  alignItems={{ xs: 'stretch', sm: 'center' }}
                   direction={{ xs: 'column', sm: 'row' }}
-                  justifyContent="space-between"
                   spacing={1.5}
+                  sx={{
+                    alignItems: { xs: 'stretch', sm: 'center' },
+                    justifyContent: 'space-between',
+                  }}
                 >
-                  <Stack alignItems="center" direction="row" spacing={1.5}>
+                  <Stack
+                    direction="row"
+                    spacing={1.5}
+                    sx={{ alignItems: 'center' }}
+                  >
                     <Box
                       sx={{
                         alignItems: 'center',
@@ -345,7 +351,7 @@ const TemplateManager = ({ documentType, documentLabel }) => {
                       Coloca el cursor en el texto y selecciona una variable
                       para insertarla.
                     </Typography>
-                    <Stack alignItems="flex-start" spacing={1}>
+                    <Stack spacing={1} sx={{ alignItems: 'flex-start' }}>
                       {editing.requiredVariables.length === 0 ? (
                         <Typography color="text.secondary" variant="caption">
                           Este bloque no utiliza variables.
@@ -392,12 +398,14 @@ const TemplateManager = ({ documentType, documentLabel }) => {
                     disabled={Boolean(busy)}
                     onChange={(event) => setContent(event.target.value)}
                     value={content}
-                    InputProps={{
-                      sx: {
-                        alignItems: 'flex-start',
-                        fontFamily: 'Consolas, "Courier New", monospace',
-                        fontSize: 14,
-                        lineHeight: 1.7,
+                    slotProps={{
+                      input: {
+                        sx: {
+                          alignItems: 'flex-start',
+                          fontFamily: 'Consolas, "Courier New", monospace',
+                          fontSize: 14,
+                          lineHeight: 1.7,
+                        },
                       },
                     }}
                   />

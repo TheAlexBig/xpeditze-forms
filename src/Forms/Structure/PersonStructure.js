@@ -352,9 +352,11 @@ const PersonStructure = ({
                     setFieldValue('documento', formatDui(event.target.value));
                   }}
                   placeholder="00000000-0"
-                  inputProps={{
-                    inputMode: 'numeric',
-                    maxLength: 10,
+                  slotProps={{
+                    htmlInput: {
+                      inputMode: 'numeric',
+                      maxLength: 10,
+                    },
                   }}
                 />
               </Grid>
@@ -621,7 +623,9 @@ const PersonStructure = ({
                         formatNit(event.target.value)
                       )
                     }
-                    inputProps={{ inputMode: 'numeric', maxLength: 17 }}
+                    slotProps={{
+                      htmlInput: { inputMode: 'numeric', maxLength: 17 },
+                    }}
                     placeholder="0000-000000-000-0"
                   />
                 </Grid>

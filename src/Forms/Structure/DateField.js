@@ -4,8 +4,11 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import SvgIcon from '@mui/material/SvgIcon';
 import TextField from '@mui/material/TextField';
-import InputMask from 'react-input-mask';
-import { formatDate, parseDisplayDate } from '../../Functions/DateFormat';
+import {
+  formatDate,
+  maskDateInput,
+  parseDisplayDate,
+} from '../../Functions/DateFormat';
 
 const CalendarIcon = () => (
   <SvgIcon fontSize="small" viewBox="0 0 24 24">
@@ -19,8 +22,7 @@ export default function DateField({
   onChange,
   onBlur,
   inputProps = {},
-  InputLabelProps,
-  InputProps,
+  slotProps = {},
   error,
   helperText,
   ...textFieldProps
@@ -44,7 +46,7 @@ export default function DateField({
   };
 
   const updateText = (event) => {
-    const nextDisplayValue = event.target.value;
+    const nextDisplayValue = maskDateInput(event.target.value);
     const nextValue = parseDisplayDate(nextDisplayValue);
     setDisplayValue(nextDisplayValue);
     setDisplayError(
@@ -64,53 +66,49 @@ export default function DateField({
 
   return (
     <Box sx={{ position: 'relative' }}>
-      <InputMask
-        mask="99/99/9999"
-        maskChar={null}
+      <TextField
+        {...textFieldProps}
+        error={Boolean(error || displayError)}
+        helperText={displayError || helperText}
         name={name}
         onBlur={onBlur}
         onChange={updateText}
+        slotProps={{
+          ...slotProps,
+          htmlInput: {
+            ...slotProps.htmlInput,
+            ...inputProps,
+            inputMode: 'numeric',
+            maxLength: 10,
+            placeholder: 'dd/mm/yyyy',
+          },
+          input: {
+            ...slotProps.input,
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="Seleccionar fecha"
+                  edge="end"
+                  onClick={() => {
+                    if (pickerRef.current?.showPicker) {
+                      pickerRef.current.showPicker();
+                    } else {
+                      pickerRef.current?.click();
+                    }
+                  }}
+                  size="small"
+                  type="button"
+                >
+                  <CalendarIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          },
+          inputLabel: { shrink: true, ...slotProps.inputLabel },
+        }}
+        type="text"
         value={displayValue}
-      >
-        {(maskedProps) => (
-          <TextField
-            {...maskedProps}
-            {...textFieldProps}
-            error={Boolean(error || displayError)}
-            helperText={displayError || helperText}
-            InputLabelProps={{ shrink: true, ...InputLabelProps }}
-            InputProps={{
-              ...InputProps,
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="Seleccionar fecha"
-                    edge="end"
-                    onClick={() => {
-                      if (pickerRef.current?.showPicker) {
-                        pickerRef.current.showPicker();
-                      } else {
-                        pickerRef.current?.click();
-                      }
-                    }}
-                    size="small"
-                    type="button"
-                  >
-                    <CalendarIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            inputProps={{
-              ...inputProps,
-              inputMode: 'numeric',
-              placeholder: 'dd/mm/yyyy',
-            }}
-            name={name}
-            type="text"
-          />
-        )}
-      </InputMask>
+      />
       <input
         aria-hidden="true"
         max={inputProps.max}

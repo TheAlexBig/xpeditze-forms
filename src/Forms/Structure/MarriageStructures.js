@@ -356,11 +356,12 @@ const PersonFields = ({
                 }));
               }}
               placeholder={usesDui || !identityFlexible ? '00000000-0' : ''}
-              inputProps={
-                usesDui || !identityFlexible
-                  ? { inputMode: 'numeric', maxLength: 10 }
-                  : undefined
-              }
+              slotProps={{
+                htmlInput:
+                  usesDui || !identityFlexible
+                    ? { inputMode: 'numeric', maxLength: 10 }
+                    : undefined,
+              }}
             />
           </Grid>
           {partyDetails &&
@@ -1379,8 +1380,10 @@ export function MarriageCelebrationStructure({
                   required
                   type="time"
                   label="Hora del acta"
-                  InputLabelProps={{ shrink: true }}
-                  inputProps={{ step: 300 }}
+                  slotProps={{
+                    htmlInput: { step: 300 },
+                    inputLabel: { shrink: true },
+                  }}
                   value={values.premaritalTime}
                   onChange={update(setValues, 'premaritalTime')}
                   {...errorProps(errors, 'details.premaritalTime')}
@@ -1440,7 +1443,7 @@ export function MarriageCelebrationStructure({
               fullWidth
               required
               type="number"
-              inputProps={{ min: 1 }}
+              slotProps={{ htmlInput: { min: 1 } }}
               label="Número de escritura"
               value={values.deedNumber}
               onChange={update(setValues, 'deedNumber')}
@@ -1496,8 +1499,10 @@ export function MarriageCelebrationStructure({
                   required
                   type="time"
                   label="Hora de celebración"
-                  InputLabelProps={{ shrink: true }}
-                  inputProps={{ step: 300 }}
+                  slotProps={{
+                    htmlInput: { step: 300 },
+                    inputLabel: { shrink: true },
+                  }}
                   value={values.celebrationTime}
                   onChange={update(setValues, 'celebrationTime')}
                   {...errorProps(errors, 'details.celebrationTime')}

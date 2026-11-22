@@ -133,11 +133,13 @@ const AgentSection = ({
         </TextField>
       </Box>
       <Stack
-        alignItems={{ xs: 'stretch', sm: 'center' }}
         direction={{ xs: 'column', sm: 'row' }}
-        justifyContent="space-between"
         spacing={1.5}
-        sx={{ mb: 2 }}
+        sx={{
+          alignItems: { xs: 'stretch', sm: 'center' },
+          justifyContent: 'space-between',
+          mb: 2,
+        }}
       >
         <Typography color="text.secondary" fontWeight={650} variant="body2">
           Notario responsable
@@ -152,7 +154,7 @@ const AgentSection = ({
         </Alert>
       )}
       {agentProps.loading && (
-        <Stack direction="row" spacing={1.5} alignItems="center">
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
           <CircularProgress size={20} />
           <Typography color="text.secondary">
             Cargando responsables...
@@ -195,7 +197,7 @@ const AgentSection = ({
                 '&:hover': { bgcolor: '#e7f3ed' },
               }}
             >
-              <Grid container alignItems="center" spacing={2}>
+              <Grid container spacing={2} sx={{ alignItems: 'center' }}>
                 <Grid
                   size={{
                     xs: 12,
@@ -226,9 +228,7 @@ const AgentSection = ({
                 >
                   <Stack
                     direction="row"
-                    flexWrap="wrap"
-                    gap={1}
-                    sx={{ mb: 0.5 }}
+                    sx={{ flexWrap: 'wrap', gap: 1, mb: 0.5 }}
                   >
                     <Chip label={agent.rol || 'Notario'} size="small" />
                     {agent.carnet && (

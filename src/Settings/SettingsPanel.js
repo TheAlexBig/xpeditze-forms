@@ -39,13 +39,15 @@ const SettingsCard = ({ children, sx = {} }) => (
 
 const DataCollectionHeader = ({ title, description, count, action }) => (
   <Stack
-    alignItems={{ xs: 'stretch', sm: 'flex-start' }}
     direction={{ xs: 'column', sm: 'row' }}
-    justifyContent="space-between"
     spacing={1.5}
+    sx={{
+      alignItems: { xs: 'stretch', sm: 'flex-start' },
+      justifyContent: 'space-between',
+    }}
   >
     <SectionHeader title={title} description={description} />
-    <Stack alignItems="center" direction="row" spacing={1}>
+    <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
       <Chip label={`${count} guardados`} size="small" />
       {action}
     </Stack>
@@ -55,14 +57,16 @@ const DataCollectionHeader = ({ title, description, count, action }) => (
 const SavedDataRow = ({ title, subtitle, badges = [], onEdit, onRemove }) => (
   <SurfaceRow>
     <Stack
-      alignItems={{ xs: 'stretch', sm: 'center' }}
       direction={{ xs: 'column', sm: 'row' }}
-      justifyContent="space-between"
       spacing={1.5}
+      sx={{
+        alignItems: { xs: 'stretch', sm: 'center' },
+        justifyContent: 'space-between',
+      }}
     >
       <Box sx={{ minWidth: 0 }}>
         {badges.length > 0 && (
-          <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mb: 0.5 }}>
+          <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 0.75, mb: 0.5 }}>
             {badges.map((badge) => (
               <Chip key={badge} label={badge} size="small" />
             ))}
@@ -89,7 +93,7 @@ const SavedDataRow = ({ title, subtitle, badges = [], onEdit, onRemove }) => (
 
 const VehicleOptionList = ({ title, kind, options, onRemove }) => (
   <Box>
-    <Stack alignItems="center" direction="row" spacing={1} sx={{ mb: 1.25 }}>
+    <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 1.25 }}>
       <Typography fontWeight={650}>{title}</Typography>
       <Chip label={options.length} size="small" />
     </Stack>
@@ -283,10 +287,12 @@ const UpdateManager = ({ info, status, busy, check }) => (
     />
     <SurfaceRow>
       <Stack
-        alignItems={{ xs: 'stretch', sm: 'center' }}
         direction={{ xs: 'column', sm: 'row' }}
-        justifyContent="space-between"
         spacing={1.5}
+        sx={{
+          alignItems: { xs: 'stretch', sm: 'center' },
+          justifyContent: 'space-between',
+        }}
       >
         <Box>
           <Typography fontWeight={650} variant="body2">
@@ -329,10 +335,12 @@ const DiagnosticsManager = ({ settingsProps }) => (
       description="Genera información técnica sanitizada, sin licencias, documentos ni datos de clientes."
     />
     <Stack
-      alignItems={{ xs: 'stretch', md: 'center' }}
       direction={{ xs: 'column', md: 'row' }}
-      justifyContent="space-between"
       spacing={2}
+      sx={{
+        alignItems: { xs: 'stretch', md: 'center' },
+        justifyContent: 'space-between',
+      }}
     >
       <Box sx={{ minWidth: 0 }}>
         <Typography color="text.secondary" variant="caption">

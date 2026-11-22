@@ -19,7 +19,7 @@ const ConfirmDataView = ({ data = {}, buttons = [] }) => {
         variant="outlined"
         sx={{ bgcolor: '#f4f8f5', borderRadius: 2.5, p: 3 }}
       >
-        <Grid container spacing={2.5} alignItems="center">
+        <Grid container spacing={2.5} sx={{ alignItems: 'center' }}>
           {Object.keys(data)
             .filter((key) => key !== 'id')
             .map((key) => (
@@ -29,9 +29,8 @@ const ConfirmDataView = ({ data = {}, buttons = [] }) => {
       </Paper>
       <Stack
         direction={{ xs: 'column-reverse', sm: 'row' }}
-        justifyContent="flex-end"
         spacing={1.5}
-        sx={{ mt: 3 }}
+        sx={{ justifyContent: 'flex-end', mt: 3 }}
       >
         {buttons.map((buttonItem) => (
           <Button

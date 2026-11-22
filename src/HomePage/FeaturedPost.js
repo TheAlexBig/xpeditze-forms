@@ -43,7 +43,7 @@ export default function FeaturedPost({ post }) {
           },
         }}
       >
-        <Grid container alignItems="center" spacing={2}>
+        <Grid container spacing={2} sx={{ alignItems: 'center' }}>
           <Grid
             size={{
               xs: 12,

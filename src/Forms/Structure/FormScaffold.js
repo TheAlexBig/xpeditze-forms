@@ -23,10 +23,12 @@ export function FormHeading({ title, description, eyebrow, summary = [] }) {
       }}
     >
       <Stack
-        alignItems={{ xs: 'flex-start', md: 'center' }}
         direction={{ xs: 'column', md: 'row' }}
-        justifyContent="space-between"
         spacing={2}
+        sx={{
+          alignItems: { xs: 'flex-start', md: 'center' },
+          justifyContent: 'space-between',
+        }}
       >
         <Box sx={{ minWidth: 0 }}>
           {eyebrow && (
@@ -49,10 +51,12 @@ export function FormHeading({ title, description, eyebrow, summary = [] }) {
         {summary.length > 0 && (
           <Stack
             direction="row"
-            flexWrap="wrap"
-            gap={1}
-            justifyContent={{ xs: 'flex-start', md: 'flex-end' }}
-            sx={{ maxWidth: { md: 420 } }}
+            sx={{
+              flexWrap: 'wrap',
+              gap: 1,
+              justifyContent: { xs: 'flex-start', md: 'flex-end' },
+              maxWidth: { md: 420 },
+            }}
           >
             {summary.map(({ label, value }) => (
               <Chip
@@ -190,11 +194,14 @@ export function ProgressiveFieldGroup({
         }}
       >
         <Stack
-          alignItems={{ xs: 'flex-start', sm: 'center' }}
           direction={{ xs: 'column', sm: 'row' }}
-          justifyContent="space-between"
           spacing={1}
-          sx={{ mr: 1, width: '100%' }}
+          sx={{
+            alignItems: { xs: 'flex-start', sm: 'center' },
+            justifyContent: 'space-between',
+            mr: 1,
+            width: '100%',
+          }}
         >
           <Stack direction="row" spacing={1.5} sx={{ minWidth: 0 }}>
             <Box
@@ -291,9 +298,8 @@ export function FormActions({ buttons }) {
   return (
     <Stack
       direction={{ xs: 'column-reverse', sm: 'row' }}
-      justifyContent="flex-end"
       spacing={1.5}
-      sx={{ mt: 3 }}
+      sx={{ justifyContent: 'flex-end', mt: 3 }}
     >
       {buttons.map((buttonItem) => (
         <Button

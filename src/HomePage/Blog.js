@@ -75,7 +75,7 @@ export default function Blog() {
             </Typography>
           </Box>
 
-          <Grid container spacing={2} alignItems="stretch">
+          <Grid container spacing={2} sx={{ alignItems: 'stretch' }}>
             <Grid
               size={{
                 xs: 12,

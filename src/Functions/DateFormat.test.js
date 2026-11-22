@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { formatDate, formatDateTime, parseDisplayDate } from './DateFormat';
+import {
+  formatDate,
+  formatDateTime,
+  maskDateInput,
+  parseDisplayDate,
+} from './DateFormat';
 
 describe('DateFormat', () => {
   it('presents ISO calendar dates as day, month and year', () => {
@@ -15,6 +20,12 @@ describe('DateFormat', () => {
     expect(parseDisplayDate('07/10/2026')).toBe('2026-10-07');
     expect(parseDisplayDate('31/02/2026')).toBe('');
     expect(parseDisplayDate('7/10/2026')).toBe('');
+  });
+
+  it('formats date input incrementally and limits it to eight digits', () => {
+    expect(maskDateInput('7')).toBe('7');
+    expect(maskDateInput('071')).toBe('07/1');
+    expect(maskDateInput('07/10/202612')).toBe('07/10/2026');
   });
 
   it('presents timestamps with a numeric Salvadoran date', () => {

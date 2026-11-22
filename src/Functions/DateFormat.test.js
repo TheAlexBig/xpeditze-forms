@@ -30,7 +30,7 @@ describe('DateFormat', () => {
 
   it('presents timestamps with a numeric Salvadoran date', () => {
     expect(formatDateTime('2026-10-07T14:05:00Z')).toMatch(
-      /^07\/10\/2026,? 14:05$/
+      /^07\/10\/2026,? 08:05$/
     );
   });
 });

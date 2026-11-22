@@ -54,5 +54,6 @@ export const formatDateTime = (value, fallback = '') => {
     hour: '2-digit',
     minute: '2-digit',
     hourCycle: 'h23',
+    timeZone: 'America/El_Salvador',
   }).format(date);
 };

@@ -9,7 +9,7 @@ export const createDraftStorage = (key, schemaVersion = 2) => ({
       ) {
         return saved;
       }
-    } catch (_error) {
+    } catch {
       // Invalid drafts are intentionally discarded below.
     }
     storage.removeItem(key);

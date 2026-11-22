@@ -22,7 +22,7 @@ export default function LicenseActivation({
     setFileError('');
     try {
       await activate(JSON.parse(await file.text()));
-    } catch (_error) {
+    } catch {
       setFileError('El archivo seleccionado no contiene una licencia válida.');
     } finally {
       event.target.value = '';

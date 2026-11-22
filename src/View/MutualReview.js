@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import MutualPaymentPlanSummary from '../Forms/Structure/MutualPaymentPlanSummary';
-import { ReviewSection, ReviewSummary } from './DocumentReviewScaffold';
+import { ReviewSectionList, ReviewSummary } from './DocumentReviewScaffold';
 import {
   calculateMutualPreview,
   formatMutualDate,
@@ -12,27 +12,58 @@ const fullName = (person = {}) =>
   [person.nombre || person.nombres, person.apellido || person.apellidos]
     .filter(Boolean)
     .join(' ') || emptyValue;
+const optionalFullName = (person = {}) =>
+  [person.nombre || person.nombres, person.apellido || person.apellidos]
+    .filter(Boolean)
+    .join(' ') || 'No especificado';
 const place = (values = {}) =>
   [values.domicilio || values.distrito, values.municipio, values.departamento]
     .filter(Boolean)
     .join(', ') || emptyValue;
-const partyValues = (person) => [
-  ['Nombre', fullName(person)],
-  ['Fecha de nacimiento', formatMutualDate(person.fecha_nacimiento)],
-  ['DUI', person.documento],
-  ['Domicilio', place(person), true],
-  ['Oficio', person.oficio],
+const partyGroups = (person) => [
+  {
+    title: 'Datos personales',
+    values: [
+      ['Nombre completo', fullName(person)],
+      ['DUI', person.documento],
+      ['Fecha de nacimiento', formatMutualDate(person.fecha_nacimiento)],
+      ['Edad', person.edad && `${person.edad} años`],
+      ['Género', person.genero],
+      ['Oficio', person.oficio],
+    ],
+  },
+  {
+    title: 'Domicilio',
+    values: [['Domicilio completo', place(person), true]],
+  },
 ];
-const vehicleValues = (vehicle = {}) => [
-  ['Placa', vehicle.placa],
-  ['Marca y modelo', [vehicle.marca, vehicle.modelo].filter(Boolean).join(' ')],
-  ['Año', vehicle.fabricado],
-  ['Clase y tipo', [vehicle.clase, vehicle.tipo].filter(Boolean).join(' / ')],
-  ['Color', vehicle.color],
-  ['Capacidad', `${vehicle.capacidad || ''} ${vehicle.unidad_capacidad || ''}`],
-  ['Motor', vehicle.num_motor],
-  ['Chasis', vehicle.num_chasis],
-  ['VIN', vehicle.num_vin],
+const vehicleGroups = (vehicle = {}) => [
+  {
+    title: 'Identificación del vehículo',
+    values: [
+      ['Placa', vehicle.placa],
+      [
+        'Marca y modelo',
+        [vehicle.marca, vehicle.modelo].filter(Boolean).join(' '),
+      ],
+      ['Año', vehicle.fabricado],
+      ['Color', vehicle.color],
+    ],
+  },
+  {
+    title: 'Características e identificación',
+    values: [
+      ['Clase', vehicle.clase],
+      ['Tipo', vehicle.tipo],
+      [
+        'Capacidad',
+        `${vehicle.capacidad || ''} ${vehicle.unidad_capacidad || ''}`.trim(),
+      ],
+      ['Motor', vehicle.num_motor],
+      ['Chasis', vehicle.num_chasis],
+      ['VIN', vehicle.num_vin],
+    ],
+  },
 ];
 
 export default function MutualReview({ data, onEdit }) {
@@ -62,7 +93,7 @@ export default function MutualReview({ data, onEdit }) {
       summary: fullName(data.agent),
       step: 0,
       values: [
-        ['Preparado por', fullName(data.preparer)],
+        ['Preparado por', optionalFullName(data.preparer)],
         ['Notario responsable', fullName(data.agent)],
         ['Domicilio del notario', place(data.agent), true],
       ],
@@ -70,74 +101,110 @@ export default function MutualReview({ data, onEdit }) {
     {
       title: 'Deudor',
       accent: '#2f7c70',
-      summary: `${fullName(data.debtor)} / ${data.debtor.documento || emptyValue}`,
+      summary: `${fullName(data.debtor)} · ${data.debtor.documento || emptyValue}`,
       step: 1,
-      values: partyValues(data.debtor),
+      groups: partyGroups(data.debtor),
     },
     {
       title: 'Acreedor',
       accent: '#8a6540',
-      summary: `${fullName(data.creditor)} / ${data.creditor.documento || emptyValue}`,
+      summary: `${fullName(data.creditor)} · ${data.creditor.documento || emptyValue}`,
       step: 2,
-      values: partyValues(data.creditor),
+      groups: partyGroups(data.creditor),
     },
     {
       title: 'Condiciones del mutuo',
       accent: '#52766e',
-      summary: `$${data.terms.amount || emptyValue} / ${data.terms.term || emptyValue}`,
+      summary: `${
+        data.terms.amount ? formatMutualMoney(data.terms.amount) : emptyValue
+      } · ${data.terms.term || emptyValue}`,
       step: 3,
-      values: [
-        ['Monto mutuado', data.terms.amount && `$${data.terms.amount}`],
-        ['Plazo', data.terms.term],
-        ['Fecha de vencimiento', formatMutualDate(data.terms.dueDate)],
-        ['Número de cuotas', data.terms.installmentCount],
-        [
-          'Monto por cuota',
-          data.terms.installmentAmount && `$${data.terms.installmentAmount}`,
-        ],
-        ['Banco para el pago', data.terms.paymentBank],
-        ['Número de cuenta', data.terms.paymentAccount],
-        [
-          'Interés mensual',
-          data.terms.monthlyInterest && `${data.terms.monthlyInterest}%`,
-        ],
-        [
-          'Interés por mora',
-          data.terms.defaultInterest && `${data.terms.defaultInterest}%`,
-        ],
-        ['Destino de los fondos', data.terms.fundsPurpose, true],
-        ['Instrumento', instrumentLabels[data.terms.instrumentType]],
-        ...(data.terms.instrumentType === 'PUBLIC_DEED'
-          ? [['Número de escritura', data.terms.deedNumber]]
-          : []),
-        ['Garantía', guaranteeLabels[data.terms.guaranteeType]],
-        ...(data.terms.guaranteeDetails
-          ? [['Bien dado en garantía', data.terms.guaranteeDetails, true]]
-          : []),
-        [
-          'Garantía con letra de cambio',
-          data.terms.billOfExchangeGuarantee ? 'Sí' : 'No',
-        ],
-        ...(data.terms.billOfExchangeGuarantee
-          ? [
-              [
-                'Vencimiento de la garantía',
-                formatMutualDate(data.terms.guaranteeDueDate),
-              ],
-            ]
-          : []),
-        [
-          'Gastos administrativos',
-          data.terms.administrativeExpenses &&
-            `${data.terms.administrativeExpenses}%`,
-        ],
-        ['Lugar de firma', signingPlace, true],
-        [
-          'Fecha y hora',
-          `${formatMutualDate(data.terms.signingDate)} ${data.terms.signingTime}`,
-        ],
-        ['Conoce al deudor', data.terms.identifiesDebtor],
-        ['Conoce al acreedor', data.terms.identifiesCreditor],
+      groups: [
+        {
+          title: 'Préstamo y plazo',
+          values: [
+            [
+              'Monto mutuado',
+              data.terms.amount && formatMutualMoney(data.terms.amount),
+            ],
+            ['Plazo', data.terms.term],
+            [
+              'Fecha de vencimiento',
+              formatMutualDate(preview?.dueDate || data.terms.dueDate),
+            ],
+            ['Número de cuotas', data.terms.installmentCount],
+            [
+              'Monto por cuota',
+              preview
+                ? formatMutualMoney(preview.installmentAmount)
+                : data.terms.installmentAmount &&
+                  formatMutualMoney(data.terms.installmentAmount),
+            ],
+            ['Destino de los fondos', data.terms.fundsPurpose, true],
+          ],
+        },
+        {
+          title: 'Pago e intereses',
+          values: [
+            ['Banco para el pago', data.terms.paymentBank],
+            ['Número de cuenta', data.terms.paymentAccount],
+            [
+              'Interés mensual',
+              data.terms.monthlyInterest
+                ? `${data.terms.monthlyInterest}%`
+                : 'Sin interés ordinario',
+            ],
+            [
+              'Interés por mora',
+              data.terms.defaultInterest
+                ? `${data.terms.defaultInterest}%`
+                : 'Sin interés por mora',
+            ],
+            [
+              'Gastos administrativos',
+              data.terms.administrativeExpenses
+                ? `${data.terms.administrativeExpenses}%`
+                : 'No aplica',
+            ],
+          ],
+        },
+        {
+          title: 'Instrumento y garantía',
+          values: [
+            ['Instrumento', instrumentLabels[data.terms.instrumentType]],
+            ...(data.terms.instrumentType === 'PUBLIC_DEED'
+              ? [['Número de escritura', data.terms.deedNumber]]
+              : []),
+            ['Garantía', guaranteeLabels[data.terms.guaranteeType]],
+            ...(data.terms.guaranteeDetails
+              ? [['Bien dado en garantía', data.terms.guaranteeDetails, true]]
+              : []),
+            [
+              'Garantía con letra de cambio',
+              data.terms.billOfExchangeGuarantee ? 'Sí' : 'No',
+            ],
+            ...(data.terms.billOfExchangeGuarantee
+              ? [
+                  [
+                    'Vencimiento de la garantía',
+                    formatMutualDate(data.terms.guaranteeDueDate),
+                  ],
+                ]
+              : []),
+          ],
+        },
+        {
+          title: 'Firma e identificación notarial',
+          values: [
+            ['Lugar de firma', signingPlace, true],
+            [
+              'Fecha y hora',
+              `${formatMutualDate(data.terms.signingDate)} · ${data.terms.signingTime}`,
+            ],
+            ['El notario conoce al deudor', data.terms.identifiesDebtor],
+            ['El notario conoce al acreedor', data.terms.identifiesCreditor],
+          ],
+        },
       ],
     },
     ...(data.terms.guaranteeType === 'PERSONAL_GUARANTOR'
@@ -147,7 +214,7 @@ export default function MutualReview({ data, onEdit }) {
             accent: '#735c91',
             summary: fullName(data.guarantor),
             step: 4,
-            values: partyValues(data.guarantor),
+            groups: partyGroups(data.guarantor),
           },
         ]
       : []),
@@ -156,16 +223,19 @@ export default function MutualReview({ data, onEdit }) {
           {
             title: 'Vehículo en garantía',
             accent: '#735c91',
-            summary: `${data.pledgedVehicle?.placa || emptyValue} / ${[
+            summary: `${data.pledgedVehicle?.placa || emptyValue} · ${[
               data.pledgedVehicle?.marca,
               data.pledgedVehicle?.modelo,
             ]
               .filter(Boolean)
               .join(' ')}`,
             step: 4,
-            values: [
-              ['Valor convenido', `$${data.terms.pledgeValue}`],
-              ...vehicleValues(data.pledgedVehicle),
+            groups: [
+              {
+                title: 'Valor de la garantía',
+                values: [['Valor convenido', `$${data.terms.pledgeValue}`]],
+              },
+              ...vehicleGroups(data.pledgedVehicle),
             ],
           },
         ]
@@ -188,21 +258,18 @@ export default function MutualReview({ data, onEdit }) {
       <ReviewSummary
         title={`${fullName(data.creditor)} presta a ${fullName(data.debtor)}`}
         chips={[
-          `Monto: $${data.terms.amount || emptyValue}`,
-          `Vencimiento: ${formatMutualDate(data.terms.dueDate) || emptyValue}`,
+          `Monto: ${
+            data.terms.amount
+              ? formatMutualMoney(data.terms.amount)
+              : emptyValue
+          }`,
+          `Vencimiento: ${
+            formatMutualDate(preview?.dueDate || data.terms.dueDate) ||
+            emptyValue
+          }`,
         ]}
       />
-      {sections.map((section, index) => (
-        <ReviewSection
-          key={section.title}
-          number={index + 1}
-          title={section.title}
-          summary={section.summary}
-          rows={section.values}
-          content={section.content}
-          onEdit={() => onEdit(section.step)}
-        />
-      ))}
+      <ReviewSectionList sections={sections} onEdit={onEdit} />
     </Box>
   );
 }

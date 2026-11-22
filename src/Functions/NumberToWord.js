@@ -67,7 +67,6 @@ const NumberToWord = (props) => {
       return `dieci${getUnits(unitsTens)}`;
     }
 
-    // eslint-disable-next-line default-case
     switch (number) {
       case '20':
         return 'veinte';
@@ -96,7 +95,6 @@ const NumberToWord = (props) => {
       return 'cien';
     }
 
-    // eslint-disable-next-line default-case
     switch (hundreds) {
       case '1':
         name = 'ciento';

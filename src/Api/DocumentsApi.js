@@ -59,7 +59,7 @@ export async function downloadCarSaleDocument(payload, draft, format = 'docx') {
     try {
       const error = await response.json();
       message = responseErrorMessage(error, message);
-    } catch (_error) {
+    } catch {
       // Keep the friendly fallback if the server did not provide JSON.
     }
     throw new Error(message);
@@ -83,7 +83,7 @@ export async function downloadMutualDocument(payload, draft, format = 'docx') {
     try {
       const error = await response.json();
       message = responseErrorMessage(error, message);
-    } catch (_error) {
+    } catch {
       // Keep the friendly fallback if the server did not provide JSON.
     }
     throw new Error(message);
@@ -105,7 +105,7 @@ export async function resolveMarriageRequirements(payload) {
     try {
       const error = await response.json();
       message = responseErrorMessage(error, message);
-    } catch (_error) {
+    } catch {
       // Keep friendly fallback.
     }
     throw new Error(message);
@@ -131,7 +131,7 @@ export async function downloadMarriageDocument(
     try {
       const error = await response.json();
       message = responseErrorMessage(error, message);
-    } catch (_error) {
+    } catch {
       // Keep friendly fallback.
     }
     throw new Error(message);

@@ -4,7 +4,7 @@ const responseMessage = async (response, fallback) => {
   try {
     const body = await response.json();
     return body.message || fallback;
-  } catch (_error) {
+  } catch {
     return fallback;
   }
 };

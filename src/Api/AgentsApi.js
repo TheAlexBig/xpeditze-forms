@@ -6,7 +6,7 @@ const requestError = async (response, fallbackMessage) => {
     if (error.fields && Object.keys(error.fields).length) {
       return `${fallbackMessage} Revise los campos obligatorios.`;
     }
-  } catch (_error) {
+  } catch {
     // Use the operation-specific message if the response is not JSON.
   }
   return `${fallbackMessage} Intente nuevamente.`;

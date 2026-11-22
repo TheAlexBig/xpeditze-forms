@@ -264,7 +264,12 @@ const PersonStructure = ({
             onSelect={setActiveGroup}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('nombre', values, touched, errors)}
                   label="Nombres"
@@ -272,7 +277,12 @@ const PersonStructure = ({
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('apellido', values, touched, errors)}
                   label="Apellidos"
@@ -280,7 +290,12 @@ const PersonStructure = ({
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <DateField
                   {...fieldProps('fecha_nacimiento', values, touched, errors)}
                   label="Fecha de nacimiento"
@@ -288,7 +303,12 @@ const PersonStructure = ({
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('genero', values, touched, errors)}
                   label="Género"
@@ -318,7 +338,12 @@ const PersonStructure = ({
             onSelect={setActiveGroup}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('documento', values, touched, errors)}
                   label="DUI"
@@ -333,7 +358,12 @@ const PersonStructure = ({
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('departamento', values, touched, errors)}
                   label="Departamento"
@@ -352,7 +382,12 @@ const PersonStructure = ({
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('municipio', values, touched, errors)}
                   disabled={!values.departamento}
@@ -373,7 +408,12 @@ const PersonStructure = ({
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('domicilio', values, touched, errors)}
                   disabled={!values.municipio}
@@ -479,14 +519,14 @@ const PersonStructure = ({
             </FormControl>
             {values.actua_por_sociedad && (
               <Grid container spacing={2} sx={{ mt: 0.5 }}>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Alert severity="info">
                     Tenga a la mano el NIT de la sociedad y el documento que
                     acredita el cargo, la vigencia y las facultades de quien
                     firma.
                   </Alert>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Typography fontWeight={700} variant="subtitle2">
                     Datos de la sociedad
                   </Typography>
@@ -494,7 +534,12 @@ const PersonStructure = ({
                     Copie estos datos del NIT o de la escritura de constitución.
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={8}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 8,
+                  }}
+                >
                   <TextField
                     {...fieldProps('sociedad_nombre', values, touched, errors)}
                     label="Denominación o razón social"
@@ -502,7 +547,12 @@ const PersonStructure = ({
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 4,
+                  }}
+                >
                   <TextField
                     {...fieldProps(
                       'sociedad_abreviatura',
@@ -515,7 +565,12 @@ const PersonStructure = ({
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <Autocomplete
                     freeSolo
                     inputValue={values.sociedad_nacionalidad || ''}
@@ -550,7 +605,12 @@ const PersonStructure = ({
                     )}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...fieldProps('sociedad_nit', values, touched, errors)}
                     label="NIT de la sociedad"
@@ -565,7 +625,12 @@ const PersonStructure = ({
                     placeholder="0000-000000-000-0"
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...fieldProps(
                       'sociedad_departamento',
@@ -589,7 +654,12 @@ const PersonStructure = ({
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...fieldProps(
                       'sociedad_municipio',
@@ -616,7 +686,12 @@ const PersonStructure = ({
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...fieldProps(
                       'sociedad_domicilio',
@@ -641,7 +716,7 @@ const PersonStructure = ({
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Typography fontWeight={700} variant="subtitle2">
                     Autorización para firmar
                   </Typography>
@@ -650,7 +725,12 @@ const PersonStructure = ({
                     sociedad.
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <Autocomplete
                     freeSolo
                     inputValue={values.sociedad_cargo || ''}
@@ -683,7 +763,12 @@ const PersonStructure = ({
                     )}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...fieldProps(
                       'sociedad_personeria_tipo',
@@ -703,7 +788,7 @@ const PersonStructure = ({
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     {...fieldProps(
                       'sociedad_personeria',

@@ -52,7 +52,13 @@ export function ReviewSummary({ title, chips = [] }) {
 
 export function ReviewField({ label, value, wide = false }) {
   return (
-    <Grid item xs={12} sm={wide ? 12 : 6} md={wide ? 12 : 4}>
+    <Grid
+      size={{
+        xs: 12,
+        sm: wide ? 12 : 6,
+        md: wide ? 12 : 4,
+      }}
+    >
       <Typography
         color="text.secondary"
         component="dt"

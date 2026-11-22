@@ -79,7 +79,12 @@ const HistoryPanel = ({ historyProps, onLoad }) => {
         </Alert>
       )}
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={12} md={5}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 5,
+          }}
+        >
           <TextField
             fullWidth
             label="Buscar documento, persona, DUI, responsable o referencia"
@@ -88,7 +93,13 @@ const HistoryPanel = ({ historyProps, onLoad }) => {
             value={query}
           />
         </Grid>
-        <Grid item xs={12} sm={4} md={2}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 4,
+            md: 2,
+          }}
+        >
           <TextField
             fullWidth
             label="Tipo"
@@ -105,7 +116,13 @@ const HistoryPanel = ({ historyProps, onLoad }) => {
             ))}
           </TextField>
         </Grid>
-        <Grid item xs={6} sm={4} md={2}>
+        <Grid
+          size={{
+            xs: 6,
+            sm: 4,
+            md: 2,
+          }}
+        >
           <DateField
             fullWidth
             label="Desde"
@@ -115,7 +132,13 @@ const HistoryPanel = ({ historyProps, onLoad }) => {
             value={fromDate}
           />
         </Grid>
-        <Grid item xs={6} sm={4} md={2}>
+        <Grid
+          size={{
+            xs: 6,
+            sm: 4,
+            md: 2,
+          }}
+        >
           <DateField
             fullWidth
             label="Hasta"
@@ -125,7 +148,12 @@ const HistoryPanel = ({ historyProps, onLoad }) => {
             value={toDate}
           />
         </Grid>
-        <Grid item xs={12} md={1}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 1,
+          }}
+        >
           <Button
             fullWidth
             onClick={clearFilters}

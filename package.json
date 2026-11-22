@@ -9,7 +9,7 @@
     "@emotion/styled": "^11.14.1",
     "@fontsource/dm-sans": "^5.3.0",
     "@fontsource/libre-franklin": "^5.3.0",
-    "@mui/material": "^5.18.0",
+    "@mui/material": "^9.5.0",
     "formik": "^2.4.9",
     "prop-types": "^15.8.1",
     "react": "^19.3.1",

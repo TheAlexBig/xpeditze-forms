@@ -110,7 +110,7 @@ const PersonFields = ({
       {showPersonal && (
         <>
           {people.length > 0 && (
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Cargar persona guardada"
@@ -134,7 +134,13 @@ const PersonFields = ({
             ['nombre', 'Nombres'],
             ['apellido', 'Apellidos'],
           ].map(([name, label]) => (
-            <Grid item xs={12} sm={6} key={name}>
+            <Grid
+              key={name}
+              size={{
+                xs: 12,
+                sm: 6,
+              }}
+            >
               <TextField
                 fullWidth
                 required
@@ -145,7 +151,12 @@ const PersonFields = ({
               />
             </Grid>
           ))}
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4,
+            }}
+          >
             <DateField
               fullWidth
               required
@@ -162,7 +173,12 @@ const PersonFields = ({
               {...errorProps(errors, `${errorPrefix}.fecha_nacimiento`)}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4,
+            }}
+          >
             <TextField
               fullWidth
               required
@@ -177,7 +193,12 @@ const PersonFields = ({
             </TextField>
           </Grid>
           {partyDetails && (
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4,
+              }}
+            >
               <TextField
                 fullWidth
                 required
@@ -195,7 +216,12 @@ const PersonFields = ({
             </Grid>
           )}
           {partyDetails && (
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4,
+              }}
+            >
               <TextField
                 fullWidth
                 required
@@ -206,7 +232,12 @@ const PersonFields = ({
               />
             </Grid>
           )}
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4,
+            }}
+          >
             <TextField
               fullWidth
               required
@@ -217,7 +248,12 @@ const PersonFields = ({
             />
           </Grid>
           {partyDetails && (
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4,
+              }}
+            >
               <TextField
                 fullWidth
                 required
@@ -232,13 +268,18 @@ const PersonFields = ({
       )}
       {showIdentification && (
         <>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography color="text.secondary" fontWeight={700} variant="body2">
               Identificación
             </Typography>
           </Grid>
           {partyDetails && (
-            <Grid item xs={12} sm={knownIdentityType ? 6 : 4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: knownIdentityType ? 6 : 4,
+              }}
+            >
               <TextField
                 fullWidth
                 required
@@ -267,7 +308,12 @@ const PersonFields = ({
             </Grid>
           )}
           {partyDetails && !knownIdentityType && (
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4,
+              }}
+            >
               <TextField
                 fullWidth
                 required
@@ -278,7 +324,12 @@ const PersonFields = ({
               />
             </Grid>
           )}
-          <Grid item xs={12} sm={partyDetails && knownIdentityType ? 6 : 4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: partyDetails && knownIdentityType ? 6 : 4,
+            }}
+          >
             <TextField
               fullWidth
               required
@@ -314,7 +365,7 @@ const PersonFields = ({
           </Grid>
           {partyDetails &&
             ['DIVORCED', 'WIDOWED'].includes(values.familyStatus) && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   required
@@ -333,12 +384,17 @@ const PersonFields = ({
       )}
       {showDomicile && (
         <>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography color="text.secondary" fontWeight={700} variant="body2">
               Domicilio
             </Typography>
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4,
+            }}
+          >
             <TextField
               fullWidth
               required
@@ -362,7 +418,12 @@ const PersonFields = ({
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4,
+            }}
+          >
             <TextField
               fullWidth
               required
@@ -386,7 +447,12 @@ const PersonFields = ({
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4,
+            }}
+          >
             <TextField
               fullWidth
               required
@@ -554,7 +620,13 @@ export function MarriagePartyStructure({
             ['fatherJob', 'Oficio del padre'],
             ['fatherSettlement', 'Domicilio del padre'],
           ].map(([name, label]) => (
-            <Grid item xs={12} sm={4} key={name}>
+            <Grid
+              key={name}
+              size={{
+                xs: 12,
+                sm: 4,
+              }}
+            >
               <TextField
                 fullWidth
                 required
@@ -591,10 +663,11 @@ export function MarriagePartyStructure({
             ['birthCertificateRegistry', 'Registro del Estado Familiar', true],
           ].map(([name, label, required]) => (
             <Grid
-              item
-              xs={12}
-              sm={name.includes('Registry') ? 12 : 4}
               key={name}
+              size={{
+                xs: 12,
+                sm: name.includes('Registry') ? 12 : 4,
+              }}
             >
               <TextField
                 fullWidth
@@ -606,7 +679,12 @@ export function MarriagePartyStructure({
               />
             </Grid>
           ))}
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+            }}
+          >
             <DateField
               fullWidth
               required
@@ -621,7 +699,12 @@ export function MarriagePartyStructure({
               )}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+            }}
+          >
             <TextField
               fullWidth
               required
@@ -761,7 +844,12 @@ export function MarriageDecisionsStructure({
         complete={Boolean(values.propertyRegime)}
       >
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+            }}
+          >
             <TextField
               fullWidth
               required
@@ -780,7 +868,12 @@ export function MarriageDecisionsStructure({
               </MenuItem>
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+            }}
+          >
             <TextField
               fullWidth
               label="Nombre que usará después del matrimonio"
@@ -789,7 +882,7 @@ export function MarriageDecisionsStructure({
               onChange={update(setValues, 'marriedName')}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -801,7 +894,7 @@ export function MarriageDecisionsStructure({
             />
           </Grid>
           {values.capitulations && (
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 required
@@ -812,7 +905,7 @@ export function MarriageDecisionsStructure({
               />
             </Grid>
           )}
-          <Grid item xs={12}>
+          <Grid size={12}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -824,7 +917,7 @@ export function MarriageDecisionsStructure({
             />
           </Grid>
           {values.marriageByProxy && (
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 required
@@ -855,7 +948,12 @@ export function MarriageDecisionsStructure({
         <Stack spacing={1.5}>
           {recognizedChildren.map((child, index) => (
             <Grid container spacing={1.5} key={index}>
-              <Grid item xs={12} sm={5}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 5,
+                }}
+              >
                 <TextField
                   fullWidth
                   required
@@ -867,7 +965,12 @@ export function MarriageDecisionsStructure({
                   {...errorProps(errors, `recognizedChildren.${index}.name`)}
                 />
               </Grid>
-              <Grid item xs={12} sm={5}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 5,
+                }}
+              >
                 <TextField
                   fullWidth
                   required
@@ -882,7 +985,12 @@ export function MarriageDecisionsStructure({
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={2}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 2,
+                }}
+              >
                 <Button
                   color="error"
                   onClick={() =>
@@ -1018,7 +1126,7 @@ export function MarriageWitnessesStructure({
               errors={errors}
               errorPrefix={`witnesses.${index}`}
             />
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControlLabel
                 sx={errorColor(errors, `witnesses.${index}.readsWritesSpanish`)}
                 control={
@@ -1057,7 +1165,7 @@ export function MarriageWitnessesStructure({
               />
             </Grid>
             {witnesses.length > 2 && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Button
                   color="error"
                   onClick={() =>
@@ -1092,7 +1200,12 @@ const Territory = ({ prefix, values, setValues, errors }) => {
   const municipality = values[prefix + 'Municipality'];
   return (
     <>
-      <Grid item xs={12} sm={4}>
+      <Grid
+        size={{
+          xs: 12,
+          sm: 4,
+        }}
+      >
         <TextField
           fullWidth
           required
@@ -1116,7 +1229,12 @@ const Territory = ({ prefix, values, setValues, errors }) => {
           ))}
         </TextField>
       </Grid>
-      <Grid item xs={12} sm={4}>
+      <Grid
+        size={{
+          xs: 12,
+          sm: 4,
+        }}
+      >
         <TextField
           fullWidth
           required
@@ -1140,7 +1258,12 @@ const Territory = ({ prefix, values, setValues, errors }) => {
           ))}
         </TextField>
       </Grid>
-      <Grid item xs={12} sm={4}>
+      <Grid
+        size={{
+          xs: 12,
+          sm: 4,
+        }}
+      >
         <TextField
           fullWidth
           required
@@ -1208,9 +1331,14 @@ export function MarriageCelebrationStructure({
             setValues={setValues}
             errors={errors}
           />
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+            }}
+          >
             <Grid container spacing={1}>
-              <Grid item xs>
+              <Grid size="grow">
                 <DateField
                   fullWidth
                   required
@@ -1221,7 +1349,7 @@ export function MarriageCelebrationStructure({
                   {...errorProps(errors, 'details.premaritalDate')}
                 />
               </Grid>
-              <Grid item xs="auto">
+              <Grid size="auto">
                 <Button
                   type="button"
                   onClick={() =>
@@ -1238,9 +1366,14 @@ export function MarriageCelebrationStructure({
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+            }}
+          >
             <Grid container spacing={1}>
-              <Grid item xs>
+              <Grid size="grow">
                 <TextField
                   fullWidth
                   required
@@ -1253,7 +1386,7 @@ export function MarriageCelebrationStructure({
                   {...errorProps(errors, 'details.premaritalTime')}
                 />
               </Grid>
-              <Grid item xs="auto">
+              <Grid size="auto">
                 <Button
                   type="button"
                   onClick={() =>
@@ -1297,7 +1430,12 @@ export function MarriageCelebrationStructure({
             setValues={setValues}
             errors={errors}
           />
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4,
+            }}
+          >
             <TextField
               fullWidth
               required
@@ -1309,9 +1447,14 @@ export function MarriageCelebrationStructure({
               {...errorProps(errors, 'details.deedNumber')}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4,
+            }}
+          >
             <Grid container spacing={1}>
-              <Grid item xs>
+              <Grid size="grow">
                 <DateField
                   fullWidth
                   required
@@ -1323,7 +1466,7 @@ export function MarriageCelebrationStructure({
                   {...errorProps(errors, 'details.celebrationDate')}
                 />
               </Grid>
-              <Grid item xs="auto">
+              <Grid size="auto">
                 <Button
                   type="button"
                   onClick={() =>
@@ -1340,9 +1483,14 @@ export function MarriageCelebrationStructure({
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4,
+            }}
+          >
             <Grid container spacing={1}>
-              <Grid item xs>
+              <Grid size="grow">
                 <TextField
                   fullWidth
                   required
@@ -1355,7 +1503,7 @@ export function MarriageCelebrationStructure({
                   {...errorProps(errors, 'details.celebrationTime')}
                 />
               </Grid>
-              <Grid item xs="auto">
+              <Grid size="auto">
                 <Button
                   type="button"
                   onClick={() =>

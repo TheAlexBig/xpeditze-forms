@@ -107,7 +107,12 @@ const DetailStructure = ({ data, title, buttons, submitAction }) => {
             onSelect={setActiveGroup}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('precio', values, touched, errors)}
                   InputProps={{
@@ -126,7 +131,12 @@ const DetailStructure = ({ data, title, buttons, submitAction }) => {
                   value={formatCurrency(values.precio)}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('calidad_de', values, touched, errors)}
                   label="Calidad de entrega"
@@ -156,7 +166,12 @@ const DetailStructure = ({ data, title, buttons, submitAction }) => {
             onSelect={setActiveGroup}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('departamento', values, touched, errors)}
                   label="Departamento"
@@ -175,7 +190,12 @@ const DetailStructure = ({ data, title, buttons, submitAction }) => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('municipio', values, touched, errors)}
                   disabled={!values.departamento}
@@ -196,7 +216,12 @@ const DetailStructure = ({ data, title, buttons, submitAction }) => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('domicilio', values, touched, errors)}
                   disabled={!values.municipio}
@@ -216,9 +241,14 @@ const DetailStructure = ({ data, title, buttons, submitAction }) => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <Grid container spacing={1}>
-                  <Grid item xs>
+                  <Grid size="grow">
                     <DateField
                       {...fieldProps('fecha_firma', values, touched, errors)}
                       label="Fecha de firma"
@@ -226,7 +256,7 @@ const DetailStructure = ({ data, title, buttons, submitAction }) => {
                       onChange={handleChange}
                     />
                   </Grid>
-                  <Grid item xs="auto">
+                  <Grid size="auto">
                     <Button
                       onClick={() => setFieldValue('fecha_firma', todayValue())}
                       sx={{ height: '100%' }}
@@ -237,9 +267,14 @@ const DetailStructure = ({ data, title, buttons, submitAction }) => {
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <Grid container spacing={1}>
-                  <Grid item xs>
+                  <Grid size="grow">
                     <TextField
                       {...fieldProps('hora_firma', values, touched, errors)}
                       InputLabelProps={{ shrink: true }}
@@ -250,7 +285,7 @@ const DetailStructure = ({ data, title, buttons, submitAction }) => {
                       type="time"
                     />
                   </Grid>
-                  <Grid item xs="auto">
+                  <Grid size="auto">
                     <Button
                       onClick={() =>
                         setFieldValue('hora_firma', currentTimeValue())
@@ -288,7 +323,13 @@ const DetailStructure = ({ data, title, buttons, submitAction }) => {
                 ['identifica_vendedor', 'El notario conoce al vendedor'],
                 ['identifica_comprador', 'El notario conoce al comprador'],
               ].map(([field, label]) => (
-                <Grid item xs={12} sm={6} key={field}>
+                <Grid
+                  key={field}
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <Box
                     sx={{
                       borderBottom: '1px solid',

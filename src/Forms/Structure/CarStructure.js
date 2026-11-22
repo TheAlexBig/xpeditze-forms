@@ -191,7 +191,12 @@ const CarStructure = ({
             onSelect={setActiveGroup}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('placa', values, touched, errors)}
                   label="Placa"
@@ -200,7 +205,12 @@ const CarStructure = ({
                   placeholder="P-123456"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('fabricado', values, touched, errors)}
                   inputProps={{ inputMode: 'numeric', maxLength: 4 }}
@@ -215,7 +225,12 @@ const CarStructure = ({
                   placeholder="2020"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 {autocompleteField(
                   'marca',
                   'Marca',
@@ -227,7 +242,12 @@ const CarStructure = ({
                   setFieldValue
                 )}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 {autocompleteField(
                   'modelo',
                   'Modelo',
@@ -256,7 +276,12 @@ const CarStructure = ({
             onSelect={setActiveGroup}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('clase', values, touched, errors)}
                   label="Clase"
@@ -278,7 +303,12 @@ const CarStructure = ({
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 {autocompleteField(
                   'tipo',
                   'Tipo',
@@ -292,7 +322,12 @@ const CarStructure = ({
                   setFieldValue
                 )}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 {autocompleteField(
                   'color',
                   'Color',
@@ -304,7 +339,12 @@ const CarStructure = ({
                   setFieldValue
                 )}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('dominio', values, touched, errors)}
                   label="Dominio"
@@ -360,7 +400,12 @@ const CarStructure = ({
           >
             <Grid container spacing={2}>
               {!isHeavyTruck(values.clase) && (
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...fieldProps('capacidad', values, touched, errors)}
                     inputProps={{ min: 0, step: '0.01' }}
@@ -375,7 +420,12 @@ const CarStructure = ({
                 </Grid>
               )}
               {!isHeavyTruck(values.clase) && (
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...fieldProps('unidad_capacidad', values, touched, errors)}
                     label="Unidad"
@@ -397,7 +447,13 @@ const CarStructure = ({
                     ['cap_carga', 'Capacidad de carga', 'number'],
                     ['cap_maxima', 'Capacidad máxima', 'number'],
                   ].map(([field, label, type]) => (
-                    <Grid item xs={12} sm={4} key={field}>
+                    <Grid
+                      key={field}
+                      size={{
+                        xs: 12,
+                        sm: 4,
+                      }}
+                    >
                       <TextField
                         {...fieldProps(field, values, touched, errors)}
                         inputProps={type === 'number' ? { min: 0 } : undefined}
@@ -410,7 +466,12 @@ const CarStructure = ({
                   ))}
                 </>
               )}
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('traccion', values, touched, errors)}
                   helperText={
@@ -449,9 +510,14 @@ const CarStructure = ({
                 ['chasis', 'num_chasis', 'Número de chasis'],
                 ['vin', 'num_vin', 'Número VIN'],
               ].map(([key, field, label]) => (
-                <Grid item xs={12} key={field}>
+                <Grid key={field} size={12}>
                   <Grid container spacing={1.5} alignItems="center">
-                    <Grid item xs={12} sm>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 'grow',
+                      }}
+                    >
                       <TextField
                         {...fieldProps(field, values, touched, errors)}
                         disabled={notAvailable[key]}
@@ -460,7 +526,12 @@ const CarStructure = ({
                         onChange={handleChange}
                       />
                     </Grid>
-                    <Grid item xs={12} sm="auto">
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 'auto',
+                      }}
+                    >
                       <FormControlLabel
                         control={
                           <Checkbox

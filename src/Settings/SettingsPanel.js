@@ -188,10 +188,11 @@ const PeopleManager = ({ people, onRemove, onUpdate }) => {
             {values &&
               PERSON_FIELDS.map(([field, label]) => (
                 <Grid
-                  item
-                  xs={12}
-                  sm={field === 'domicilio' ? 12 : 6}
                   key={field}
+                  size={{
+                    xs: 12,
+                    sm: field === 'domicilio' ? 12 : 6,
+                  }}
                 >
                   {field === 'fecha_nacimiento' ? (
                     <DateField
@@ -547,7 +548,12 @@ const SettingsPanel = ({ settingsProps }) => {
 
       {view === 'general' && (
         <Grid container spacing={2}>
-          <Grid item xs={12} lg={6}>
+          <Grid
+            size={{
+              xs: 12,
+              lg: 6,
+            }}
+          >
             <SettingsCard>
               <UpdateManager
                 info={settingsProps.applicationInfo}
@@ -557,7 +563,12 @@ const SettingsPanel = ({ settingsProps }) => {
               />
             </SettingsCard>
           </Grid>
-          <Grid item xs={12} lg={6}>
+          <Grid
+            size={{
+              xs: 12,
+              lg: 6,
+            }}
+          >
             <SettingsCard>
               <BackupManager
                 busy={settingsProps.busy}
@@ -566,7 +577,7 @@ const SettingsPanel = ({ settingsProps }) => {
               />
             </SettingsCard>
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <SettingsCard>
               <DiagnosticsManager settingsProps={settingsProps} />
             </SettingsCard>
@@ -576,7 +587,12 @@ const SettingsPanel = ({ settingsProps }) => {
 
       {view === 'data' && (
         <Grid container spacing={2}>
-          <Grid item xs={12} lg={7}>
+          <Grid
+            size={{
+              xs: 12,
+              lg: 7,
+            }}
+          >
             <SettingsCard>
               <PeopleManager
                 people={settingsProps.people}
@@ -585,7 +601,12 @@ const SettingsPanel = ({ settingsProps }) => {
               />
             </SettingsCard>
           </Grid>
-          <Grid item xs={12} lg={5}>
+          <Grid
+            size={{
+              xs: 12,
+              lg: 5,
+            }}
+          >
             <SettingsCard>
               <AgentManager
                 agents={settingsProps.agents}
@@ -596,7 +617,7 @@ const SettingsPanel = ({ settingsProps }) => {
               />
             </SettingsCard>
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <SettingsCard>
               <VehicleCatalogManager
                 options={settingsProps.vehicleOptions}

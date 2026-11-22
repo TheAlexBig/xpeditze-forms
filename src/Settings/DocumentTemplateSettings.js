@@ -315,7 +315,12 @@ const TemplateManager = ({ documentType, documentLabel }) => {
                 correctamente.
               </Typography>
               <Grid container spacing={2.5}>
-                <Grid item xs={12} md={3}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 3,
+                  }}
+                >
                   <Box
                     sx={{
                       bgcolor: 'action.hover',
@@ -368,7 +373,12 @@ const TemplateManager = ({ documentType, documentLabel }) => {
                     )}
                   </Box>
                 </Grid>
-                <Grid item xs={12} md={9}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 9,
+                  }}
+                >
                   <Typography fontWeight={700} sx={{ mb: 1 }} variant="body2">
                     Contenido editable
                   </Typography>

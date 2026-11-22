@@ -182,7 +182,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
               onSelect={setActiveGroup}
             >
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...field('amount', values, touched, errors)}
                     InputProps={{
@@ -196,7 +201,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     onBlur={handleBlur}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...field('monthlyInterest', values, touched, errors)}
                     label="Tasa mensual incluida en la cuota (%) — opcional"
@@ -205,7 +215,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     onBlur={handleBlur}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...field('termMode', values, touched, errors)}
                     label="Definir vencimiento por"
@@ -222,7 +237,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                 </Grid>
                 {values.termMode === 'DURATION' ? (
                   <>
-                    <Grid item xs={12} sm={3}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 3,
+                      }}
+                    >
                       <TextField
                         {...field('termQuantity', values, touched, errors)}
                         label="Cantidad"
@@ -231,7 +251,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                         onBlur={handleBlur}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={3}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 3,
+                      }}
+                    >
                       <TextField
                         {...field('termUnit', values, touched, errors)}
                         label="Unidad"
@@ -246,7 +271,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     </Grid>
                   </>
                 ) : (
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6,
+                    }}
+                  >
                     <DateField
                       {...field('dueDate', values, touched, errors)}
                       inputProps={{ min: values.signingDate }}
@@ -256,7 +286,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     />
                   </Grid>
                 )}
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...field('installmentCount', values, touched, errors)}
                     label="Número de cuotas"
@@ -265,7 +300,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     onBlur={handleBlur}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     fullWidth
                     InputProps={{ readOnly: true }}
@@ -275,7 +315,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     }
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...field('paymentBank', values, touched, errors)}
                     label="Banco para el pago"
@@ -283,7 +328,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     onBlur={handleBlur}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...field('paymentAccount', values, touched, errors)}
                     label="Número de cuenta"
@@ -316,7 +366,7 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
               onSelect={setActiveGroup}
             >
               <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     {...field('fundsPurpose', values, touched, errors)}
                     label="Destino de los fondos"
@@ -324,7 +374,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     onBlur={handleBlur}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...field('defaultInterest', values, touched, errors)}
                     label="Interés mensual por mora (%) — opcional"
@@ -333,7 +388,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     onBlur={handleBlur}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...field(
                       'administrativeExpenses',
@@ -369,7 +429,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
               onSelect={setActiveGroup}
             >
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...field('instrumentType', values, touched, errors)}
                     disabled={values.guaranteeType === 'MORTGAGE'}
@@ -385,7 +450,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                   </TextField>
                 </Grid>
                 {values.instrumentType === 'PUBLIC_DEED' && (
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6,
+                    }}
+                  >
                     <TextField
                       {...field('deedNumber', values, touched, errors)}
                       label="Número de escritura"
@@ -423,7 +493,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
               onSelect={setActiveGroup}
             >
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...field('guaranteeType', values, touched, errors)}
                     label="Tipo de garantía"
@@ -448,7 +523,7 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                   </TextField>
                 </Grid>
                 {['MOVABLE', 'MORTGAGE'].includes(values.guaranteeType) && (
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <TextField
                       {...field('guaranteeDetails', values, touched, errors)}
                       label="Descripción del bien dado en garantía"
@@ -460,7 +535,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                   </Grid>
                 )}
                 {values.guaranteeType === 'VEHICLE_PLEDGE' && (
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6,
+                    }}
+                  >
                     <TextField
                       {...field('pledgeValue', values, touched, errors)}
                       InputProps={{
@@ -531,7 +611,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
               onSelect={setActiveGroup}
             >
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...field('signingState', values, touched, errors)}
                     label="Departamento"
@@ -550,7 +635,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...field('signingMunicipality', values, touched, errors)}
                     disabled={!values.signingState}
@@ -571,7 +661,12 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <TextField
                     {...field('signingDistrict', values, touched, errors)}
                     disabled={!values.signingMunicipality}
@@ -591,9 +686,14 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <Grid container spacing={1}>
-                    <Grid item xs>
+                    <Grid size="grow">
                       <DateField
                         {...field('signingDate', values, touched, errors)}
                         label="Fecha de firma"
@@ -601,7 +701,7 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                         onChange={handleChange}
                       />
                     </Grid>
-                    <Grid item xs="auto">
+                    <Grid size="auto">
                       <Button
                         onClick={() =>
                           setFieldValue('signingDate', todayValue())
@@ -614,9 +714,14 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
                   <Grid container spacing={1}>
-                    <Grid item xs>
+                    <Grid size="grow">
                       <TextField
                         {...field('signingTime', values, touched, errors)}
                         InputLabelProps={{ shrink: true }}
@@ -627,7 +732,7 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                         type="time"
                       />
                     </Grid>
-                    <Grid item xs="auto">
+                    <Grid size="auto">
                       <Button
                         onClick={() =>
                           setFieldValue('signingTime', currentTimeValue())
@@ -665,7 +770,13 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                   ['identifiesDebtor', 'El notario conoce al deudor'],
                   ['identifiesCreditor', 'El notario conoce al acreedor'],
                 ].map(([name, label]) => (
-                  <Grid item xs={12} sm={6} key={name}>
+                  <Grid
+                    key={name}
+                    size={{
+                      xs: 12,
+                      sm: 6,
+                    }}
+                  >
                     <Box
                       sx={{
                         borderBottom: '1px solid',

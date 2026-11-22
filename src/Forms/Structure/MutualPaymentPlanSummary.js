@@ -5,7 +5,12 @@ import Typography from '@mui/material/Typography';
 import { formatMutualDate, formatMutualMoney } from '../MutualFinancialPreview';
 
 const SummaryValue = ({ label, value, emphasized = false }) => (
-  <Grid item xs={6} md={3}>
+  <Grid
+    size={{
+      xs: 6,
+      md: 3,
+    }}
+  >
     <Typography color="text.secondary" variant="caption">
       {label}
     </Typography>

@@ -35,7 +35,12 @@ const labels = {
 };
 
 const PropertyViewItem = ({ label, value }) => (
-  <Grid item xs={12} sm={6}>
+  <Grid
+    size={{
+      xs: 12,
+      sm: 6,
+    }}
+  >
     <Typography color="text.secondary" variant="caption">
       {labels[label] || label}
     </Typography>

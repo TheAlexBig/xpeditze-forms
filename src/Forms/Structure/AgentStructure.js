@@ -96,7 +96,12 @@ const AgentStructure = ({
             onSelect={setActiveGroup}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('nombres', values, touched, errors)}
                   label="Nombres"
@@ -104,7 +109,12 @@ const AgentStructure = ({
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('apellidos', values, touched, errors)}
                   label="Apellidos"
@@ -112,7 +122,12 @@ const AgentStructure = ({
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('carnet', values, touched, errors)}
                   label={
@@ -124,7 +139,12 @@ const AgentStructure = ({
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('rol', values, touched, errors)}
                   label="Rol"
@@ -139,7 +159,12 @@ const AgentStructure = ({
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('genero', values, touched, errors)}
                   label="Género"
@@ -169,7 +194,12 @@ const AgentStructure = ({
             onSelect={setActiveGroup}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('departamento', values, touched, errors)}
                   label="Departamento"
@@ -188,7 +218,12 @@ const AgentStructure = ({
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('municipio', values, touched, errors)}
                   disabled={!values.departamento}
@@ -209,7 +244,12 @@ const AgentStructure = ({
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <TextField
                   {...fieldProps('distrito', values, touched, errors)}
                   disabled={!values.municipio}

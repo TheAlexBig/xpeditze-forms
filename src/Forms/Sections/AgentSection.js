@@ -196,7 +196,12 @@ const AgentSection = ({
               }}
             >
               <Grid container alignItems="center" spacing={2}>
-                <Grid item xs={12} sm="auto">
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 'auto',
+                  }}
+                >
                   <Box
                     sx={{
                       alignItems: 'center',
@@ -213,7 +218,12 @@ const AgentSection = ({
                     {index + 1}
                   </Box>
                 </Grid>
-                <Grid item xs={12} sm>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 'grow',
+                  }}
+                >
                   <Stack
                     direction="row"
                     flexWrap="wrap"
@@ -231,7 +241,12 @@ const AgentSection = ({
                     {agent.municipio || 'No especificado'}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm="auto">
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 'auto',
+                  }}
+                >
                   <Typography color="primary.main" fontWeight={650}>
                     Seleccionar
                   </Typography>

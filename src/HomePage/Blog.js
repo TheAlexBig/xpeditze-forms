@@ -76,7 +76,12 @@ export default function Blog() {
           </Box>
 
           <Grid container spacing={2} alignItems="stretch">
-            <Grid item xs={12} md={8}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 8,
+              }}
+            >
               <Box
                 sx={{
                   bgcolor: 'background.paper',
@@ -105,7 +110,12 @@ export default function Blog() {
               </Box>
             </Grid>
 
-            <Grid item xs={12} md={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 4,
+              }}
+            >
               <Box
                 sx={{
                   bgcolor: 'background.paper',

@@ -14,7 +14,7 @@ const Arrow = (props) => (
 
 export default function FeaturedPost({ post }) {
   return (
-    <Grid item xs={12}>
+    <Grid size={12}>
       <ButtonBase
         component={RouterLink}
         to={post.to}
@@ -44,7 +44,12 @@ export default function FeaturedPost({ post }) {
         }}
       >
         <Grid container alignItems="center" spacing={2}>
-          <Grid item xs={12} sm={2}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 2,
+            }}
+          >
             <Typography
               color="secondary.main"
               fontWeight={700}
@@ -53,7 +58,12 @@ export default function FeaturedPost({ post }) {
               Disponible
             </Typography>
           </Grid>
-          <Grid item xs={12} sm={7}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 7,
+            }}
+          >
             <Typography component="h3" variant="h5" sx={{ mb: 1 }}>
               {post.title}
             </Typography>
@@ -64,7 +74,12 @@ export default function FeaturedPost({ post }) {
               {post.meta}
             </Typography>
           </Grid>
-          <Grid item xs={12} sm={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 3,
+            }}
+          >
             <Box
               sx={{
                 alignItems: 'center',

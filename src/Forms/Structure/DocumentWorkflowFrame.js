@@ -121,7 +121,12 @@ export default function DocumentWorkflowFrame({
             </Typography>
           )}
           <Grid container spacing={3}>
-            <Grid item xs={12} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3,
+              }}
+            >
               <Box
                 sx={{
                   borderRight: { md: '1px solid' },
@@ -189,7 +194,12 @@ export default function DocumentWorkflowFrame({
                 </Typography>
               </Box>
             </Grid>
-            <Grid item xs={12} md={9}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 9,
+              }}
+            >
               <Box sx={{ minHeight: 560, pl: { md: 2 }, py: { xs: 1, md: 0 } }}>
                 {children}
               </Box>

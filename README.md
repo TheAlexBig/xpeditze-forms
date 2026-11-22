@@ -15,7 +15,9 @@ npm install
 npm start
 ```
 
-The web application is built with Vite and requires Node.js 18 or newer.
+The web application is built with Vite and requires Node.js 22.12 or newer.
+The required version is recorded in `.nvmrc`; run `nvm install && nvm use`
+before installing dependencies when using nvm.
 
 During development, Vite proxies `/api` calls to the Xpeditze API at
 `http://127.0.0.1:8080`. Override it only when using a different API:

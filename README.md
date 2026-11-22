@@ -15,7 +15,7 @@ npm install
 npm start
 ```
 
-The web application is built with Vite and requires Node.js 22.12 or newer.
+The web application is built with Vite and requires Node.js 22.13 or newer.
 The required version is recorded in `.nvmrc`; run `nvm install && nvm use`
 before installing dependencies when using nvm.
 

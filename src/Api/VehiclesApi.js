@@ -16,9 +16,10 @@ const localRequest = async (path, options, failureMessage) => {
   let response;
   try {
     response = await fetch(`${apiUrl}${path}`, options);
-  } catch (_error) {
+  } catch (error) {
     throw new Error(
-      `${failureMessage} No se pudo conectar con la aplicación local.`
+      `${failureMessage} No se pudo conectar con la aplicación local.`,
+      { cause: error }
     );
   }
 

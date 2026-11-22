@@ -13,8 +13,13 @@ export async function localRequest(path, options, fallback) {
   let response;
   try {
     response = await fetch(`${apiUrl}${path}`, options);
-  } catch (_error) {
-    throw new Error(`${fallback} No se pudo conectar con la aplicación local.`);
+  } catch (error) {
+    throw new Error(
+      `${fallback} No se pudo conectar con la aplicación local.`,
+      {
+        cause: error,
+      }
+    );
   }
   if (!response.ok) {
     throw new Error(await responseMessage(response, fallback));

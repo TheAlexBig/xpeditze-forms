@@ -47,15 +47,8 @@ const NumberToWord = (props) => {
     }
   };
   const deleteZerosLeft = (number) => {
-    let i = 0;
-    let isZero = true;
-    for (i = 0; i < number.length; i += 1) {
-      if (number.charAt(i) !== 0) {
-        isZero = false;
-        break;
-      }
-    }
-    return isZero ? '0' : number.substr(i);
+    const firstNonZeroIndex = [...number].findIndex((digit) => digit !== '0');
+    return firstNonZeroIndex === -1 ? '0' : number.substring(firstNonZeroIndex);
   };
 
   const getUnits = (number) => {

@@ -11,9 +11,8 @@ const numberToLetter = (number) => {
     'ocho ',
     'nueve ',
   ];
-  let i = 0;
   let Lnumber = '';
-  for (i = 0; i < number.length; i += 1) {
+  for (let i = 0; i < number.length; i += 1) {
     Lnumber += units[parseInt(number.charAt(i))];
   }
   return Lnumber;

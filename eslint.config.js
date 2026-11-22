@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import { fixupPluginRules } from '@eslint/compat';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import prettier from 'eslint-plugin-prettier';
@@ -24,10 +25,10 @@ export default [
       },
     },
     plugins: {
-      'jsx-a11y': jsxA11y,
-      prettier,
-      react,
-      'react-hooks': reactHooks,
+      'jsx-a11y': fixupPluginRules(jsxA11y),
+      prettier: fixupPluginRules(prettier),
+      react: fixupPluginRules(react),
+      'react-hooks': fixupPluginRules(reactHooks),
     },
     settings: { react: { version: 'detect' } },
     rules: {

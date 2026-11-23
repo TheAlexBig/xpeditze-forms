@@ -25,7 +25,7 @@ describe('mutual draft storage', () => {
       '2026-09-04T17:30:00Z'
     );
     expect(readMutualDraft(storage)).toEqual({
-      schemaVersion: 2,
+      schemaVersion: 3,
       state: { terms: { amount: '750' } },
       savedAt: '2026-09-04T17:30:00Z',
     });

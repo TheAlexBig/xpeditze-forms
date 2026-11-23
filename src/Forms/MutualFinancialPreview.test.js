@@ -88,4 +88,31 @@ describe('mutual financial preview', () => {
       )
     ).toBeNull();
   });
+
+  it('supports individually agreed dates and amounts', () => {
+    const result = calculateMutualPreview(
+      terms({
+        paymentScheduleMode: 'CUSTOM',
+        customInstallments: [
+          { date: '2026-02-01', capital: '400', interest: '20' },
+          { date: '2026-04-15', capital: '600', interest: '10' },
+        ],
+      })
+    );
+
+    expect(result.dueDate).toBe('2026-04-15');
+    expect(result.interest).toBe(30);
+    expect(result.total).toBe(1030);
+    expect(result.periodicity).toBe('Fechas y montos pactados individualmente');
+    expect(
+      calculateMutualPreview(
+        terms({
+          paymentScheduleMode: 'CUSTOM',
+          customInstallments: [
+            { date: '2026-02-01', capital: '999', interest: '0' },
+          ],
+        })
+      )
+    ).toBeNull();
+  });
 });

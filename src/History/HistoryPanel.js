@@ -239,7 +239,7 @@ const HistoryPanel = ({ historyProps, onLoad }) => {
                             size="small"
                             variant="outlined"
                           >
-                            Abrir
+                            Usar como base
                           </Button>
                           <Button
                             onClick={() =>

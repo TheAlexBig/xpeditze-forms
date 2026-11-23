@@ -44,18 +44,28 @@ export const createMutualPayload = ({
     condiciones: {
       monto: toLegalNumber(terms.amount),
       plazo:
-        terms.termMode === 'SPECIFIC_DATE'
-          ? 'QUE FINALIZA EN LA FECHA PACTADA'
-          : replaceNumericSequences(terms.term),
+        terms.paymentScheduleMode === 'CUSTOM'
+          ? 'SEGÚN LAS FECHAS INDIVIDUALMENTE PACTADAS'
+          : terms.termMode === 'SPECIFIC_DATE'
+            ? 'QUE FINALIZA EN LA FECHA PACTADA'
+            : replaceNumericSequences(terms.term),
       fecha_vencimiento: toLegalDate(preview?.dueDate || terms.dueDate),
-      numero_cuotas: toLegalNumber(terms.installmentCount),
+      numero_cuotas: toLegalNumber(
+        preview?.installments.length || terms.installmentCount
+      ),
       monto_cuota: toLegalNumber(
         preview?.installmentAmount || terms.installmentAmount
       ),
+      metodo_pago: terms.paymentMethod,
       banco_pago: replaceNumericSequences(terms.paymentBank),
       cuenta_pago: toLegalIdentifier(terms.paymentAccount),
-      interes_mensual: toLegalPercentage(terms.monthlyInterest),
+      detalles_pago: replaceNumericSequences(terms.paymentDetails),
+      interes_mensual:
+        terms.paymentScheduleMode === 'CUSTOM'
+          ? ''
+          : toLegalPercentage(terms.monthlyInterest),
       interes_mora: toLegalPercentage(terms.defaultInterest),
+      periodo_interes_mora: terms.defaultInterestPeriod,
       destino_fondos: replaceNumericSequences(terms.fundsPurpose),
       garantia_letra_cambio: terms.billOfExchangeGuarantee,
       fecha_vencimiento_garantia: terms.billOfExchangeGuarantee
@@ -76,8 +86,23 @@ export const createMutualPayload = ({
       unidad_plazo: terms.termMode === 'DURATION' ? terms.termUnit : null,
       fecha_inicio: terms.signingDate,
       fecha_vencimiento_iso: preview?.dueDate || terms.dueDate,
-      numero_cuotas_numerico: Number(terms.installmentCount),
-      tasa_interes_mensual: terms.monthlyInterest || 0,
+      numero_cuotas_numerico:
+        preview?.installments.length || Number(terms.installmentCount),
+      tasa_interes_mensual:
+        terms.paymentScheduleMode === 'CUSTOM' ? 0 : terms.monthlyInterest || 0,
+      modalidad_plan_pagos: terms.paymentScheduleMode,
+      cuotas_personalizadas:
+        terms.paymentScheduleMode === 'CUSTOM'
+          ? terms.customInstallments.map((installment) => ({
+              fecha: installment.date,
+              capital: installment.capital,
+              interes: installment.interest || 0,
+            }))
+          : [],
+      permite_abonos_anticipados: terms.allowsEarlyPayments,
+      condiciones_abonos_anticipados: terms.allowsEarlyPayments
+        ? replaceNumericSequences(terms.earlyPaymentTerms)
+        : '',
       tipo_instrumento: terms.instrumentType,
       tipo_garantia: terms.guaranteeType,
       numero_escritura:

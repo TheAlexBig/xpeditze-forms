@@ -70,9 +70,11 @@ const mutualPresentation = (item) => {
   const agent = draftSection(item, 'agent');
   const preparer = draftSection(item, 'preparer');
   const debtorName =
+    debtor.sociedad_nombre ||
     [debtor.nombre, debtor.apellido].filter(Boolean).join(' ') ||
     item.buyerName;
   const creditorName =
+    creditor.sociedad_nombre ||
     [creditor.nombre, creditor.apellido].filter(Boolean).join(' ') ||
     item.sellerName;
   return {
@@ -95,9 +97,14 @@ const mutualPresentation = (item) => {
       creditorName,
       debtor.documento,
       creditor.documento,
+      debtor.sociedad_nombre,
+      debtor.sociedad_nit,
+      creditor.sociedad_nombre,
+      creditor.sociedad_nit,
       terms.amount,
       terms.paymentBank,
       terms.paymentAccount,
+      terms.paymentDetails,
       agent.nombres,
       agent.apellidos,
       preparer.nombres,

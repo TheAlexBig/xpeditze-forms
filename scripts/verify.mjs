@@ -26,7 +26,14 @@ for (const stage of stages) {
   const seconds = ((performance.now() - startedAt) / 1000).toFixed(1);
 
   if (result.status !== 0) {
-    const output = [result.stdout, result.stderr].filter(Boolean).join('\n');
+    const processFailure = result.error
+      ? `No se pudo ejecutar ${stage.command}: ${result.error.message}`
+      : result.signal
+        ? `El proceso terminó por la señal ${result.signal}.`
+        : '';
+    const output = [result.stdout, result.stderr, processFailure]
+      .filter(Boolean)
+      .join('\n');
     const log = path.join(
       os.tmpdir(),
       `xpeditze-forms-${stage.name.toLowerCase()}-fallo.log`

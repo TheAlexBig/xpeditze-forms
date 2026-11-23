@@ -36,6 +36,26 @@ const partyGroups = (person) => [
     title: 'Domicilio',
     values: [['Domicilio completo', place(person), true]],
   },
+  ...(person.actua_por_sociedad
+    ? [
+        {
+          title: 'Sociedad representada',
+          values: [
+            ['Razón social', person.sociedad_nombre],
+            ['Nombre abreviado', person.sociedad_abreviatura],
+            ['NIT', person.sociedad_nit],
+            ['Cargo y vigencia', person.sociedad_cargo, true],
+            [
+              'Personería',
+              [person.sociedad_personeria_tipo, person.sociedad_personeria]
+                .filter(Boolean)
+                .join(': '),
+              true,
+            ],
+          ],
+        },
+      ]
+    : []),
 ];
 const vehicleGroups = (vehicle = {}) => [
   {
@@ -86,6 +106,11 @@ export default function MutualReview({ data, onEdit }) {
     MOVABLE: 'Garantía mobiliaria',
     MORTGAGE: 'Garantía hipotecaria',
   };
+  const paymentMethodLabels = {
+    BANK_TRANSFER: 'Depósito o transferencia',
+    CASH: 'Efectivo',
+    OTHER: 'Otra forma pactada',
+  };
   const sections = [
     {
       title: 'Responsables',
@@ -132,7 +157,12 @@ export default function MutualReview({ data, onEdit }) {
               'Fecha de vencimiento',
               formatMutualDate(preview?.dueDate || data.terms.dueDate),
             ],
-            ['Número de cuotas', data.terms.installmentCount],
+            [
+              'Número de cuotas',
+              data.terms.paymentScheduleMode === 'CUSTOM'
+                ? data.terms.customInstallments.length
+                : data.terms.installmentCount,
+            ],
             [
               'Monto por cuota',
               preview
@@ -141,13 +171,24 @@ export default function MutualReview({ data, onEdit }) {
                   formatMutualMoney(data.terms.installmentAmount),
             ],
             ['Destino de los fondos', data.terms.fundsPurpose, true],
+            [
+              'Modalidad del plan',
+              data.terms.paymentScheduleMode === 'CUSTOM'
+                ? 'Fechas y montos pactados individualmente'
+                : 'Cuotas calculadas',
+            ],
           ],
         },
         {
           title: 'Pago e intereses',
           values: [
-            ['Banco para el pago', data.terms.paymentBank],
-            ['Número de cuenta', data.terms.paymentAccount],
+            ['Forma de pago', paymentMethodLabels[data.terms.paymentMethod]],
+            ...(data.terms.paymentMethod === 'BANK_TRANSFER'
+              ? [
+                  ['Banco para el pago', data.terms.paymentBank],
+                  ['Número de cuenta', data.terms.paymentAccount],
+                ]
+              : [['Lugar y condiciones', data.terms.paymentDetails, true]]),
             [
               'Interés mensual',
               data.terms.monthlyInterest
@@ -157,7 +198,11 @@ export default function MutualReview({ data, onEdit }) {
             [
               'Interés por mora',
               data.terms.defaultInterest
-                ? `${data.terms.defaultInterest}%`
+                ? `${data.terms.defaultInterest}% ${
+                    data.terms.defaultInterestPeriod === 'ANNUAL'
+                      ? 'anual'
+                      : 'mensual'
+                  }`
                 : 'Sin interés por mora',
             ],
             [
@@ -165,6 +210,13 @@ export default function MutualReview({ data, onEdit }) {
               data.terms.administrativeExpenses
                 ? `${data.terms.administrativeExpenses}%`
                 : 'No aplica',
+            ],
+            [
+              'Abonos anticipados',
+              data.terms.allowsEarlyPayments
+                ? data.terms.earlyPaymentTerms
+                : 'No pactados',
+              true,
             ],
           ],
         },

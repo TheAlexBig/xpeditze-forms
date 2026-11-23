@@ -59,6 +59,34 @@ const TemplatePreview = ({ content }) => (
   </Box>
 );
 
+const SAMPLE_VALUES = {
+  name: 'ANA MARTÍNEZ',
+  debtor: 'ANA MARTÍNEZ, comerciante, del domicilio de Santa Tecla',
+  creditor: 'SOCIEDAD EJEMPLO, S.A. DE C.V.',
+  debtorRole: 'LA DEUDORA',
+  creditorRole: 'LA SOCIEDAD ACREEDORA',
+  amount: 'CINCO MIL DÓLARES',
+  term: 'DOCE MESES',
+  dueDate: 'VEINTITRÉS DE NOVIEMBRE DE DOS MIL VEINTISIETE',
+  installments: 'DOCE CUOTAS',
+  installmentAmount: 'CUATROCIENTOS CINCUENTA DÓLARES',
+  paymentInstructions:
+    'El pago se depositará en la cuenta UNO DOS TRES del BANCO EJEMPLO',
+  signingPlace: 'Distrito de Santa Tecla, Municipio de La Libertad Sur',
+  signingState: 'LA LIBERTAD',
+  signingDate: 'VEINTITRÉS DE NOVIEMBRE DE DOS MIL VEINTISÉIS',
+  signingTime: 'NUEVE HORAS',
+  notary: 'MARÍA EJEMPLO',
+  notaryTitle: 'NOTARIA',
+  number: 'III)',
+};
+
+export const renderSampleTemplate = (content) =>
+  content.replace(/:[A-Za-z][A-Za-z0-9]*/g, (variable) => {
+    const name = variable.slice(1);
+    return SAMPLE_VALUES[name] || `[${name.replaceAll(/([A-Z])/g, ' $1')}]`;
+  });
+
 const TEMPLATE_DOCUMENTS = [
   { id: 'car-sale', label: 'Compraventa de vehículo' },
   { id: 'mutual', label: 'Mutuo' },
@@ -417,6 +445,35 @@ const TemplateManager = ({ documentType, documentLabel }) => {
                     Vista rápida
                   </Typography>
                   <TemplatePreview content={content} />
+                  <Typography
+                    fontWeight={700}
+                    sx={{ mb: 1, mt: 2.5 }}
+                    variant="body2"
+                  >
+                    Vista con datos de ejemplo
+                  </Typography>
+                  <Typography color="text.secondary" variant="caption">
+                    Comprueba que las variables queden integradas naturalmente
+                    antes de guardar.
+                  </Typography>
+                  <Box
+                    sx={{
+                      bgcolor: 'background.paper',
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      borderRadius: 1,
+                      lineHeight: 1.8,
+                      maxHeight: 220,
+                      mt: 1,
+                      overflowY: 'auto',
+                      p: 2,
+                      whiteSpace: 'pre-wrap',
+                    }}
+                  >
+                    <Typography variant="body2">
+                      {renderSampleTemplate(content)}
+                    </Typography>
+                  </Box>
                 </Grid>
               </Grid>
             </DialogContent>

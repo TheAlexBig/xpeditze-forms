@@ -19,7 +19,20 @@ describe('mutual payload', () => {
   it('converts money, percentages, dates and identifiers to legal text', () => {
     const payload = createMutualPayload({
       debtor: person('01234567-8', 'Femenino'),
-      creditor: person('87654321-0', 'Masculino'),
+      creditor: {
+        ...person('87654321-0', 'Masculino'),
+        actua_por_sociedad: true,
+        sociedad_nombre: 'Crédito Ejemplo, S.A. de C.V.',
+        sociedad_abreviatura: 'Crédito Ejemplo',
+        sociedad_nacionalidad: 'Salvadoreña',
+        sociedad_departamento: 'San Salvador',
+        sociedad_municipio: 'San Salvador Centro',
+        sociedad_domicilio: 'San Salvador',
+        sociedad_nit: '0614-310124-106-5',
+        sociedad_cargo: 'Administrador único por 7 años',
+        sociedad_personeria_tipo: 'Credencial de elección',
+        sociedad_personeria: 'Inscrita al número 25',
+      },
       pledgedVehicle: {
         placa: 'P-2914',
         marca: 'Kia',
@@ -59,10 +72,18 @@ describe('mutual payload', () => {
         dueDate: '2026-10-09',
         installmentCount: '6',
         installmentAmount: '185',
+        paymentMethod: 'BANK_TRANSFER',
+        paymentScheduleMode: 'CALCULATED',
+        customInstallments: [],
         paymentBank: 'Banco Prueba',
         paymentAccount: '1234',
+        paymentDetails: '',
         monthlyInterest: '3.75',
         defaultInterest: '1',
+        defaultInterestPeriod: 'ANNUAL',
+        allowsEarlyPayments: true,
+        earlyPaymentTerms:
+          'Se aplican directamente al capital sin penalización',
         fundsPurpose: 'Gastos personales',
         billOfExchangeGuarantee: false,
         guaranteeDueDate: '',
@@ -86,6 +107,18 @@ describe('mutual payload', () => {
     expect(payload.condiciones.monto).toBe('CINCO MIL CON VEINTIDÓS CENTAVOS');
     expect(payload.condiciones.interes_mensual).toBe(
       'TRES PUNTO SETENTA Y CINCO'
+    );
+    expect(payload.condiciones.metodo_pago).toBe('BANK_TRANSFER');
+    expect(payload.condiciones.periodo_interes_mora).toBe('ANNUAL');
+    expect(payload.condiciones.permite_abonos_anticipados).toBe(true);
+    expect(payload.condiciones.condiciones_abonos_anticipados).toContain(
+      'directamente al capital'
+    );
+    expect(payload.acreedor.sociedad.nombre).toBe(
+      'Crédito Ejemplo, S.A. de C.V.'
+    );
+    expect(payload.acreedor.sociedad.nit).toBe(
+      'CERO SEIS UNO CUATRO-TRES UNO CERO UNO DOS CUATRO-UNO CERO SEIS-CINCO'
     );
     expect(payload.condiciones.fecha_vencimiento).toContain('OCTUBRE');
     expect(payload.condiciones.lugar_firma).toBe(

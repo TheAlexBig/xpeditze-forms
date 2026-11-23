@@ -287,7 +287,17 @@ const App = () => {
                 path="/configuracion"
                 element={<SettingsPage settingsProps={settingsProps} />}
               />
-              <Route exact path="/" element={<Blog />} />
+              <Route
+                exact
+                path="/"
+                element={
+                  <Blog
+                    historyProps={historyProps}
+                    lastBackupAt={maintenanceTools.lastBackupAt}
+                    loadDraft={form.loadHistoryDraft}
+                  />
+                }
+              />
             </Routes>
           </Suspense>
         </Router>

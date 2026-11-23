@@ -20,23 +20,29 @@ import {
 } from './FormScaffold';
 import { calculateMutualPreview } from '../MutualFinancialPreview';
 import MutualPaymentPlanSummary from './MutualPaymentPlanSummary';
+import MutualCustomScheduleFields from './MutualCustomScheduleFields';
 import { currentTimeValue, todayValue } from '../../Functions/DateTimeValues';
 import DateField from './DateField';
 
 const required = 'Campo requerido';
 const schema = Yup.object({
   amount: Yup.number().positive('Debe ser mayor que cero').required(required),
-  termMode: Yup.string().required(required),
-  termQuantity: Yup.number().when('termMode', {
-    is: 'DURATION',
-    then: (value) => value.integer().positive().required(required),
-  }),
-  termUnit: Yup.string().when('termMode', {
-    is: 'DURATION',
+  paymentScheduleMode: Yup.string().required(required),
+  termMode: Yup.string().when('paymentScheduleMode', {
+    is: 'CALCULATED',
     then: (value) => value.required(required),
   }),
-  dueDate: Yup.string().when('termMode', {
-    is: 'SPECIFIC_DATE',
+  termQuantity: Yup.number().when(['paymentScheduleMode', 'termMode'], {
+    is: (schedule, mode) => schedule === 'CALCULATED' && mode === 'DURATION',
+    then: (value) => value.integer().positive().required(required),
+  }),
+  termUnit: Yup.string().when(['paymentScheduleMode', 'termMode'], {
+    is: (schedule, mode) => schedule === 'CALCULATED' && mode === 'DURATION',
+    then: (value) => value.required(required),
+  }),
+  dueDate: Yup.string().when(['paymentScheduleMode', 'termMode'], {
+    is: (schedule, mode) =>
+      schedule === 'CALCULATED' && mode === 'SPECIFIC_DATE',
     then: (value) =>
       value
         .required(required)
@@ -52,9 +58,44 @@ const schema = Yup.object({
           }
         ),
   }),
-  installmentCount: Yup.number().integer().positive().required(required),
-  paymentBank: Yup.string().required(required),
-  paymentAccount: Yup.string().required(required),
+  installmentCount: Yup.number().when('paymentScheduleMode', {
+    is: 'CALCULATED',
+    then: (value) => value.integer().positive().required(required),
+  }),
+  customInstallments: Yup.array().when('paymentScheduleMode', {
+    is: 'CUSTOM',
+    then: (value) =>
+      value
+        .of(
+          Yup.object({
+            date: Yup.string().required(required),
+            capital: Yup.number()
+              .positive('Debe ser mayor que cero')
+              .required(required),
+            interest: Yup.number()
+              .min(0, 'No puede ser negativo')
+              .required(required),
+          })
+        )
+        .min(1, 'Agregue al menos una cuota'),
+  }),
+  paymentMethod: Yup.string().required(required),
+  paymentBank: Yup.string().when('paymentMethod', {
+    is: 'BANK_TRANSFER',
+    then: (value) => value.required(required),
+  }),
+  paymentAccount: Yup.string().when('paymentMethod', {
+    is: 'BANK_TRANSFER',
+    then: (value) => value.required(required),
+  }),
+  paymentDetails: Yup.string().when('paymentMethod', {
+    is: (value) => value && value !== 'BANK_TRANSFER',
+    then: (value) => value.required(required),
+  }),
+  earlyPaymentTerms: Yup.string().when('allowsEarlyPayments', {
+    is: true,
+    then: (value) => value.required(required),
+  }),
   fundsPurpose: Yup.string().required(required),
   instrumentType: Yup.string().required(required),
   guaranteeType: Yup.string().required(required),
@@ -78,12 +119,14 @@ const schema = Yup.object({
   signingTime: Yup.string().required(required),
 }).test('valid-payment-plan', '', function validatePaymentPlan(values) {
   const termReady =
-    values?.termMode === 'SPECIFIC_DATE'
-      ? values.dueDate
-      : values?.termQuantity && values?.termUnit;
+    values?.paymentScheduleMode === 'CUSTOM'
+      ? values.customInstallments?.length
+      : values?.termMode === 'SPECIFIC_DATE'
+        ? values.dueDate
+        : values?.termQuantity && values?.termUnit;
   if (
     !values?.amount ||
-    !values?.installmentCount ||
+    (values?.paymentScheduleMode !== 'CUSTOM' && !values?.installmentCount) ||
     !values?.signingDate ||
     !termReady
   ) {
@@ -92,8 +135,14 @@ const schema = Yup.object({
   return (
     Boolean(calculateMutualPreview(values)) ||
     this.createError({
-      path: 'installmentCount',
-      message: 'Las cuotas no caben dentro del plazo seleccionado',
+      path:
+        values.paymentScheduleMode === 'CUSTOM'
+          ? 'customInstallments'
+          : 'installmentCount',
+      message:
+        values.paymentScheduleMode === 'CUSTOM'
+          ? 'Revise fechas y montos; el capital debe sumar el monto mutuado'
+          : 'Las cuotas no caben dentro del plazo seleccionado',
     })
   );
 });
@@ -121,9 +170,11 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
           dueDate: preview.dueDate,
           installmentAmount: String(preview.installmentAmount),
           term:
-            values.termMode === 'SPECIFIC_DATE'
-              ? 'que finaliza en la fecha pactada'
-              : `${values.termQuantity} ${unit[values.termUnit]}`,
+            values.paymentScheduleMode === 'CUSTOM'
+              ? 'según las fechas individualmente pactadas'
+              : values.termMode === 'SPECIFIC_DATE'
+                ? 'que finaliza en la fecha pactada'
+                : `${values.termQuantity} ${unit[values.termUnit]}`,
         });
       }}
       validationSchema={schema}
@@ -147,33 +198,44 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
               description="Defina capital, plazo, pago, intereses opcionales y datos de autenticación."
               summary={[
                 { label: 'Monto', value: values.amount && `$${values.amount}` },
-                { label: 'Cuotas', value: values.installmentCount },
+                {
+                  label: 'Cuotas',
+                  value:
+                    values.paymentScheduleMode === 'CUSTOM'
+                      ? values.customInstallments.length
+                      : values.installmentCount,
+                },
               ]}
             />
             <ProgressiveFieldGroup
               id="capital"
               title="Capital y forma de pago"
-              complete={fieldsAreComplete(values, [
-                'amount',
-                'termMode',
-                'installmentCount',
-                'paymentBank',
-                'paymentAccount',
-                ...(values.termMode === 'SPECIFIC_DATE'
-                  ? ['dueDate']
-                  : ['termQuantity', 'termUnit']),
-              ])}
+              complete={
+                Boolean(preview) &&
+                fieldsAreComplete(values, [
+                  'amount',
+                  'paymentScheduleMode',
+                  'paymentMethod',
+                  ...(values.paymentMethod === 'BANK_TRANSFER'
+                    ? ['paymentBank', 'paymentAccount']
+                    : ['paymentDetails']),
+                ])
+              }
               errorCount={countFieldErrors(
                 errors,
                 [
                   'amount',
+                  'paymentScheduleMode',
+                  'customInstallments',
                   'termMode',
                   'termQuantity',
                   'termUnit',
                   'dueDate',
                   'installmentCount',
+                  'paymentMethod',
                   'paymentBank',
                   'paymentAccount',
+                  'paymentDetails',
                 ],
                 touched,
                 submitCount > 0
@@ -203,88 +265,123 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     onBlur={handleBlur}
                   />
                 </Grid>
-                <Grid
-                  size={{
-                    xs: 12,
-                    sm: 6,
-                  }}
-                >
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
-                    {...field('monthlyInterest', values, touched, errors)}
-                    label="Tasa mensual incluida en la cuota (%) — opcional"
-                    type="number"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                </Grid>
-                <Grid
-                  size={{
-                    xs: 12,
-                    sm: 6,
-                  }}
-                >
-                  <TextField
-                    {...field('termMode', values, touched, errors)}
-                    label="Definir vencimiento por"
+                    {...field('paymentScheduleMode', values, touched, errors)}
+                    label="Definir plan de pagos por"
                     select
                     onChange={(event) => {
                       handleChange(event);
-                      setFieldValue('dueDate', '');
+                      setFieldValue('monthlyInterest', '');
+                      if (
+                        event.target.value === 'CUSTOM' &&
+                        values.customInstallments.length === 0
+                      ) {
+                        setFieldValue('customInstallments', [
+                          { date: '', capital: values.amount, interest: '0' },
+                        ]);
+                      }
                     }}
                     onBlur={handleBlur}
                   >
-                    <MenuItem value="DURATION">Cantidad y unidad</MenuItem>
-                    <MenuItem value="SPECIFIC_DATE">Fecha específica</MenuItem>
+                    <MenuItem value="CALCULATED">Cuotas calculadas</MenuItem>
+                    <MenuItem value="CUSTOM">Fechas y montos pactados</MenuItem>
                   </TextField>
                 </Grid>
-                {values.termMode === 'DURATION' ? (
+                {values.paymentScheduleMode === 'CALCULATED' ? (
                   <>
-                    <Grid
-                      size={{
-                        xs: 12,
-                        sm: 3,
-                      }}
-                    >
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <TextField
-                        {...field('termQuantity', values, touched, errors)}
-                        label="Cantidad"
+                        {...field('monthlyInterest', values, touched, errors)}
+                        label="Tasa mensual incluida en la cuota (%) — opcional"
                         type="number"
                         onChange={handleChange}
                         onBlur={handleBlur}
                       />
                     </Grid>
-                    <Grid
-                      size={{
-                        xs: 12,
-                        sm: 3,
-                      }}
-                    >
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <TextField
-                        {...field('termUnit', values, touched, errors)}
-                        label="Unidad"
+                        {...field('termMode', values, touched, errors)}
+                        label="Definir vencimiento por"
                         select
-                        onChange={handleChange}
+                        onChange={(event) => {
+                          handleChange(event);
+                          setFieldValue('dueDate', '');
+                        }}
                         onBlur={handleBlur}
                       >
-                        <MenuItem value="DAYS">Días</MenuItem>
-                        <MenuItem value="MONTHS">Meses</MenuItem>
-                        <MenuItem value="YEARS">Años</MenuItem>
+                        <MenuItem value="DURATION">Cantidad y unidad</MenuItem>
+                        <MenuItem value="SPECIFIC_DATE">
+                          Fecha específica
+                        </MenuItem>
                       </TextField>
+                    </Grid>
+                    {values.termMode === 'DURATION' ? (
+                      <>
+                        <Grid size={{ xs: 12, sm: 3 }}>
+                          <TextField
+                            {...field('termQuantity', values, touched, errors)}
+                            label="Cantidad"
+                            type="number"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                          />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 3 }}>
+                          <TextField
+                            {...field('termUnit', values, touched, errors)}
+                            label="Unidad"
+                            select
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                          >
+                            <MenuItem value="DAYS">Días</MenuItem>
+                            <MenuItem value="MONTHS">Meses</MenuItem>
+                            <MenuItem value="YEARS">Años</MenuItem>
+                          </TextField>
+                        </Grid>
+                      </>
+                    ) : (
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <DateField
+                          {...field('dueDate', values, touched, errors)}
+                          inputProps={{ min: values.signingDate }}
+                          label="Fecha de vencimiento"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </Grid>
+                    )}
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <TextField
+                        {...field('installmentCount', values, touched, errors)}
+                        label="Número de cuotas"
+                        type="number"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <TextField
+                        fullWidth
+                        slotProps={{ input: { readOnly: true } }}
+                        label="Valor inicial por cuota"
+                        value={
+                          preview
+                            ? `$${preview.installmentAmount.toFixed(2)}`
+                            : ''
+                        }
+                      />
                     </Grid>
                   </>
                 ) : (
-                  <Grid
-                    size={{
-                      xs: 12,
-                      sm: 6,
-                    }}
-                  >
-                    <DateField
-                      {...field('dueDate', values, touched, errors)}
-                      inputProps={{ min: values.signingDate }}
-                      label="Fecha de vencimiento"
-                      onChange={handleChange}
+                  <Grid size={12}>
+                    <MutualCustomScheduleFields
+                      errors={errors.customInstallments}
+                      installments={values.customInstallments}
                       onBlur={handleBlur}
+                      onChange={handleChange}
+                      setFieldValue={setFieldValue}
                     />
                   </Grid>
                 )}
@@ -295,72 +392,84 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                   }}
                 >
                   <TextField
-                    {...field('installmentCount', values, touched, errors)}
-                    label="Número de cuotas"
-                    type="number"
-                    onChange={handleChange}
+                    {...field('paymentMethod', values, touched, errors)}
+                    label="Forma de pago"
+                    select
+                    onChange={(event) => {
+                      handleChange(event);
+                      setFieldValue('paymentBank', '');
+                      setFieldValue('paymentAccount', '');
+                      setFieldValue('paymentDetails', '');
+                    }}
                     onBlur={handleBlur}
-                  />
+                  >
+                    <MenuItem value="BANK_TRANSFER">
+                      Depósito o transferencia
+                    </MenuItem>
+                    <MenuItem value="CASH">Efectivo</MenuItem>
+                    <MenuItem value="OTHER">Otra forma pactada</MenuItem>
+                  </TextField>
                 </Grid>
-                <Grid
-                  size={{
-                    xs: 12,
-                    sm: 6,
-                  }}
-                >
-                  <TextField
-                    fullWidth
-                    slotProps={{ input: { readOnly: true } }}
-                    label="Valor inicial por cuota"
-                    value={
-                      preview ? `$${preview.installmentAmount.toFixed(2)}` : ''
-                    }
-                  />
-                </Grid>
-                <Grid
-                  size={{
-                    xs: 12,
-                    sm: 6,
-                  }}
-                >
-                  <TextField
-                    {...field('paymentBank', values, touched, errors)}
-                    label="Banco para el pago"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                </Grid>
-                <Grid
-                  size={{
-                    xs: 12,
-                    sm: 6,
-                  }}
-                >
-                  <TextField
-                    {...field('paymentAccount', values, touched, errors)}
-                    label="Número de cuenta"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                </Grid>
+                {values.paymentMethod === 'BANK_TRANSFER' ? (
+                  <>
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <TextField
+                        {...field('paymentBank', values, touched, errors)}
+                        label="Banco para el pago"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <TextField
+                        {...field('paymentAccount', values, touched, errors)}
+                        label="Número de cuenta"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                    </Grid>
+                  </>
+                ) : (
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      {...field('paymentDetails', values, touched, errors)}
+                      label={
+                        values.paymentMethod === 'CASH'
+                          ? 'Lugar del pago en efectivo'
+                          : 'Forma y lugar de pago pactados'
+                      }
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                  </Grid>
+                )}
               </Grid>
-              {Number(values.monthlyInterest) > 0 && (
-                <Alert severity="info" sx={{ mt: 2 }}>
-                  La cuota ya incluye este costo. El documento lo identifica
-                  expresamente y aclara que no se agregará otro interés
-                  ordinario si los pagos se realizan según lo pactado.
-                </Alert>
-              )}
+              {values.paymentScheduleMode === 'CALCULATED' &&
+                Number(values.monthlyInterest) > 0 && (
+                  <Alert severity="info" sx={{ mt: 2 }}>
+                    La cuota ya incluye este costo. El documento lo identifica
+                    expresamente y aclara que no se agregará otro interés
+                    ordinario si los pagos se realizan según lo pactado.
+                  </Alert>
+                )}
               {preview && <MutualPaymentPlanSummary preview={preview} />}
             </ProgressiveFieldGroup>
             <ProgressiveFieldGroup
               id="interest"
               title="Intereses y destino"
               accent="#8a6540"
-              complete={fieldsAreComplete(values, ['fundsPurpose'])}
+              complete={fieldsAreComplete(values, [
+                'fundsPurpose',
+                ...(values.allowsEarlyPayments ? ['earlyPaymentTerms'] : []),
+              ])}
               errorCount={countFieldErrors(
                 errors,
-                ['fundsPurpose', 'defaultInterest', 'administrativeExpenses'],
+                [
+                  'fundsPurpose',
+                  'defaultInterest',
+                  'administrativeExpenses',
+                  'earlyPaymentTerms',
+                ],
                 touched,
                 submitCount > 0
               )}
@@ -384,12 +493,31 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                 >
                   <TextField
                     {...field('defaultInterest', values, touched, errors)}
-                    label="Interés mensual por mora (%) — opcional"
+                    label="Interés por mora (%) — opcional"
                     type="number"
                     onChange={handleChange}
                     onBlur={handleBlur}
                   />
                 </Grid>
+                {values.defaultInterest && (
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      {...field(
+                        'defaultInterestPeriod',
+                        values,
+                        touched,
+                        errors
+                      )}
+                      label="Periodicidad del interés por mora"
+                      select
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    >
+                      <MenuItem value="MONTHLY">Mensual</MenuItem>
+                      <MenuItem value="ANNUAL">Anual</MenuItem>
+                    </TextField>
+                  </Grid>
+                )}
                 <Grid
                   size={{
                     xs: 12,
@@ -409,6 +537,36 @@ export default function MutualTermsStructure({ data, onSubmit, onBack }) {
                     onBlur={handleBlur}
                   />
                 </Grid>
+                <Grid size={12}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={values.allowsEarlyPayments}
+                        onChange={(event) => {
+                          setFieldValue(
+                            'allowsEarlyPayments',
+                            event.target.checked
+                          );
+                          if (!event.target.checked)
+                            setFieldValue('earlyPaymentTerms', '');
+                        }}
+                      />
+                    }
+                    label="Las partes permiten abonos anticipados"
+                  />
+                </Grid>
+                {values.allowsEarlyPayments && (
+                  <Grid size={12}>
+                    <TextField
+                      {...field('earlyPaymentTerms', values, touched, errors)}
+                      label="Aplicación y condiciones de los abonos anticipados"
+                      multiline
+                      minRows={2}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                  </Grid>
+                )}
               </Grid>
             </ProgressiveFieldGroup>
             <ProgressiveFieldGroup

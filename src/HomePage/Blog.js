@@ -1,10 +1,20 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import ButtonBase from '@mui/material/ButtonBase';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { readCarSaleDraft } from '../Forms/CarSaleDraftStorage';
+import { readMarriageDraft } from '../Forms/MarriageDraftStorage';
+import { readMutualDraft } from '../Forms/MutualDraftStorage';
+import { formatDateTime } from '../Functions/DateFormat';
+import { prepareHistoryDraft } from '../History/HistoryDraftNavigation';
+import { presentDocumentHistory } from '../History/DocumentHistoryPresentation';
 import Header from './Header';
 import FeaturedPost from './FeaturedPost';
 
@@ -46,7 +56,41 @@ const quickLinks = [
   },
 ];
 
-export default function Blog() {
+const draftTypes = [
+  {
+    label: 'Compra venta de vehículos',
+    read: readCarSaleDraft,
+    route: '/compra-venta',
+  },
+  { label: 'Mutuo', read: readMutualDraft, route: '/mutuo' },
+  { label: 'Matrimonio', read: readMarriageDraft, route: '/matrimonio' },
+];
+
+export const listSavedDrafts = (storage) =>
+  draftTypes
+    .map((type) => ({ ...type, draft: type.read(storage) }))
+    .filter(({ draft }) => draft)
+    .sort((left, right) =>
+      right.draft.savedAt.localeCompare(left.draft.savedAt)
+    );
+
+export const backupNeedsAttention = (lastBackupAt, now = Date.now()) => {
+  const backupTime = new Date(lastBackupAt).getTime();
+  return (
+    !lastBackupAt ||
+    Number.isNaN(backupTime) ||
+    now - backupTime > 30 * 24 * 60 * 60 * 1000
+  );
+};
+
+export default function Blog({ historyProps, lastBackupAt, loadDraft }) {
+  const navigate = useNavigate();
+  const savedDrafts = listSavedDrafts(window.localStorage);
+  const recentDocuments = historyProps.data.slice(0, 5);
+  const reuseDocument = (historyItem) => {
+    navigate(prepareHistoryDraft(historyItem, window.localStorage, loadDraft));
+  };
+
   return (
     <>
       <Header title="Xpeditze" />
@@ -74,6 +118,33 @@ export default function Blog() {
               Cree un documento nuevo o continúe con información guardada.
             </Typography>
           </Box>
+
+          {historyProps.error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {historyProps.error}
+            </Alert>
+          )}
+
+          {backupNeedsAttention(lastBackupAt) && (
+            <Alert
+              action={
+                <Button
+                  color="inherit"
+                  component={RouterLink}
+                  size="small"
+                  to="/configuracion"
+                >
+                  Respaldar
+                </Button>
+              }
+              severity="warning"
+              sx={{ mb: 2 }}
+            >
+              {lastBackupAt
+                ? `El último respaldo registrado fue ${formatDateTime(lastBackupAt)}.`
+                : 'Aún no hay un respaldo registrado en este equipo.'}
+            </Alert>
+          )}
 
           <Grid container spacing={2} sx={{ alignItems: 'stretch' }}>
             <Grid
@@ -157,8 +228,150 @@ export default function Blog() {
               </Box>
             </Grid>
           </Grid>
+
+          {(savedDrafts.length > 0 || recentDocuments.length > 0) && (
+            <Grid container spacing={2} sx={{ mt: 0 }}>
+              {savedDrafts.length > 0 && (
+                <Grid size={{ xs: 12, md: 5 }}>
+                  <Box
+                    sx={{
+                      bgcolor: 'background.paper',
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      borderRadius: 2,
+                      height: '100%',
+                      p: { xs: 2, md: 2.5 },
+                    }}
+                  >
+                    <Typography component="h2" variant="h6">
+                      Continuar borrador
+                    </Typography>
+                    <Typography color="text.secondary" variant="body2">
+                      Retome el trabajo guardado automáticamente.
+                    </Typography>
+                    <Stack sx={{ mt: 1.5 }}>
+                      {savedDrafts.map(({ draft, label, route }) => (
+                        <ButtonBase
+                          component={RouterLink}
+                          key={route}
+                          to={route}
+                          sx={{
+                            borderTop: '1px solid',
+                            borderColor: 'divider',
+                            display: 'block',
+                            py: 1.25,
+                            textAlign: 'left',
+                            width: '100%',
+                          }}
+                        >
+                          <Typography fontWeight={650} variant="body2">
+                            {label}
+                          </Typography>
+                          <Typography color="text.secondary" variant="caption">
+                            Guardado {formatDateTime(draft.savedAt)}
+                          </Typography>
+                        </ButtonBase>
+                      ))}
+                    </Stack>
+                  </Box>
+                </Grid>
+              )}
+
+              {recentDocuments.length > 0 && (
+                <Grid size={{ xs: 12, md: savedDrafts.length ? 7 : 12 }}>
+                  <Box
+                    sx={{
+                      bgcolor: 'background.paper',
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      borderRadius: 2,
+                      height: '100%',
+                      p: { xs: 2, md: 2.5 },
+                    }}
+                  >
+                    <Typography component="h2" variant="h6">
+                      Documentos recientes
+                    </Typography>
+                    <Typography color="text.secondary" variant="body2">
+                      Descargue un archivo o reutilice sus datos.
+                    </Typography>
+                    <Stack sx={{ mt: 1.5 }}>
+                      {recentDocuments.map((historyItem) => {
+                        const presentation =
+                          presentDocumentHistory(historyItem);
+                        return (
+                          <Stack
+                            direction={{ xs: 'column', sm: 'row' }}
+                            key={historyItem.id}
+                            spacing={1}
+                            sx={{
+                              alignItems: { sm: 'center' },
+                              borderTop: '1px solid',
+                              borderColor: 'divider',
+                              justifyContent: 'space-between',
+                              py: 1.1,
+                            }}
+                          >
+                            <Box sx={{ minWidth: 0 }}>
+                              <Typography fontWeight={650} variant="body2">
+                                {presentation.title}
+                              </Typography>
+                              <Typography
+                                color="text.secondary"
+                                variant="caption"
+                              >
+                                {formatDateTime(historyItem.createdAt)}
+                              </Typography>
+                            </Box>
+                            <Stack direction="row" spacing={0.5}>
+                              <Button
+                                disabled={
+                                  !Object.keys(historyItem.draft || {}).length
+                                }
+                                onClick={() => reuseDocument(historyItem)}
+                                size="small"
+                                variant="outlined"
+                              >
+                                Usar como base
+                              </Button>
+                              <Button
+                                onClick={() =>
+                                  historyProps.download(historyItem, 'docx')
+                                }
+                                size="small"
+                              >
+                                Word
+                              </Button>
+                              <Button
+                                onClick={() =>
+                                  historyProps.download(historyItem, 'pdf')
+                                }
+                                size="small"
+                              >
+                                PDF
+                              </Button>
+                            </Stack>
+                          </Stack>
+                        );
+                      })}
+                    </Stack>
+                  </Box>
+                </Grid>
+              )}
+            </Grid>
+          )}
         </Container>
       </Box>
     </>
   );
 }
+
+Blog.propTypes = {
+  historyProps: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    download: PropTypes.func.isRequired,
+    error: PropTypes.string,
+  }).isRequired,
+  lastBackupAt: PropTypes.string,
+  loadDraft: PropTypes.func.isRequired,
+};

@@ -55,8 +55,50 @@ export const resolveMutualDueDate = (terms) => {
 
 export const calculateMutualPreview = (terms) => {
   const capital = Number(terms.amount);
-  const count = Number(terms.installmentCount);
   const start = parseDate(terms.signingDate);
+  if (terms.paymentScheduleMode === 'CUSTOM') {
+    const custom = terms.customInstallments || [];
+    if (!(capital > 0) || !start || custom.length === 0) return null;
+    let previous = start;
+    let capitalTotal = 0;
+    let interestTotal = 0;
+    const installments = [];
+    for (const item of custom) {
+      const date = parseDate(item.date);
+      const installmentCapital = Number(item.capital);
+      const installmentInterest = Number(item.interest || 0);
+      if (
+        !date ||
+        date <= previous ||
+        !(installmentCapital > 0) ||
+        installmentInterest < 0
+      )
+        return null;
+      capitalTotal += installmentCapital;
+      interestTotal += installmentInterest;
+      installments.push({
+        date: item.date,
+        capital: installmentCapital,
+        interest: installmentInterest,
+        total:
+          Math.round((installmentCapital + installmentInterest) * 100) / 100,
+      });
+      previous = date;
+    }
+    if (Math.round(capitalTotal * 100) !== Math.round(capital * 100))
+      return null;
+    const interest = Math.round(interestTotal * 100) / 100;
+    return {
+      capital,
+      interest,
+      total: Math.round((capital + interest) * 100) / 100,
+      dueDate: installments.at(-1).date,
+      installmentAmount: installments[0].total,
+      periodicity: 'Fechas y montos pactados individualmente',
+      installments,
+    };
+  }
+  const count = Number(terms.installmentCount);
   const dueDate = resolveMutualDueDate(terms);
   const end = parseDate(dueDate);
   if (

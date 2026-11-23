@@ -1,8 +1,8 @@
 # Xpeditze Web
 
 React application for generating Salvadoran legal documents through guided
-forms. It supports vehicle purchase-and-sale agreements and simple mutual
-agreements with notarial authentication.
+forms. It supports vehicle purchase-and-sale agreements, mutual agreements,
+and marriage files.
 
 Xpeditze is licensed under the [Apache License 2.0](LICENSE). See the
 [privacy policy](PRIVACY.md), [security policy](SECURITY.md), and
@@ -61,14 +61,31 @@ bill-of-exchange guarantee, jurisdiction, signing place, and authentication
 details. Department, municipality, and district use the same dependent
 territorial selectors as the vehicle-sale workflow.
 
+Debtors and creditors may represent a company without flattening its NIT,
+personería, domicile, or representative capacity into the natural person.
+Payment plans may be calculated or use individually agreed dates with separate
+capital and interest; payment may be by bank, cash, or another described
+arrangement. Early-payment terms and monthly or annual default interest are
+explicit options.
+
 The workflow prevents the same normalized DUI from being used for debtor and
 creditor. It maintains an independent local autosave, restores saved drafts,
 uses the same sectioned and editable review as vehicle sales, and generates
 Word or PDF through `POST /api/v1/documents/mutual/history`.
 
-Both document types appear in the global `/historial` table. Mutual agreements
+All document types appear in the global `/historial` table. Mutual agreements
 can be searched by party, DUI, bank, account, notary, or preparer. Opening a
 history row restores its draft at the corresponding workflow route.
+
+## Marriage Flow
+
+The `/matrimonio` wizard gathers the responsible notary, both parties, parents,
+birth certificates, witnesses, property regime, and ceremony details. It asks
+for prior-marriage evidence, capitulations, recognized children, proxy, and
+interpreter information only when applicable. The generated Word or PDF
+contains the premarital act, marriage deed, and internal registration-control
+sheet. Marriage records also appear in global history and can be reused as the
+base for a new draft.
 
 ## Tests
 

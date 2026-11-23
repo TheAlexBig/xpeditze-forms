@@ -11,6 +11,16 @@ import {
   legalSettlement,
 } from './LegalPayload';
 
+const isSalvadoranPlace = (country) => country === 'El Salvador';
+
+const structuredPlace = (party, prefix) =>
+  isSalvadoranPlace(party[prefix + 'Country'])
+    ? `${legalSettlement(
+        party[prefix + 'Settlement'],
+        party[prefix + 'Municipality']
+      )}, departamento de ${party[prefix + 'State']}, El Salvador`
+    : `${party[prefix + 'Place']}, ${party[prefix + 'Country']}`;
+
 const parentPayload = (party, prefix) => ({
   nombre: replaceNumericSequences(
     [party[prefix + 'Name'], party[prefix + 'LastName']]
@@ -18,12 +28,17 @@ const parentPayload = (party, prefix) => ({
       .join(' ')
   ),
   oficio: replaceNumericSequences(party[prefix + 'Job']),
-  departamento: replaceNumericSequences(party[prefix + 'State']),
+  pais: replaceNumericSequences(party[prefix + 'Country']),
+  departamento: isSalvadoranPlace(party[prefix + 'Country'])
+    ? replaceNumericSequences(party[prefix + 'State'])
+    : '',
   domicilio: replaceNumericSequences(
-    legalSettlement(
-      party[prefix + 'Settlement'],
-      party[prefix + 'Municipality']
-    )
+    isSalvadoranPlace(party[prefix + 'Country'])
+      ? legalSettlement(
+          party[prefix + 'Settlement'],
+          party[prefix + 'Municipality']
+        )
+      : party[prefix + 'Settlement']
   ),
 });
 
@@ -32,7 +47,7 @@ const partyPayload = (party) => ({
   fecha_nacimiento: party.fecha_nacimiento,
   estado_familiar: party.familyStatus,
   nacionalidad: replaceNumericSequences(party.nationality),
-  lugar_nacimiento: replaceNumericSequences(party.birthPlace),
+  lugar_nacimiento: replaceNumericSequences(structuredPlace(party, 'birth')),
   tipo_identificacion: replaceNumericSequences(party.identityType),
   madre: parentPayload(party, 'mother'),
   padre: parentPayload(party, 'father'),

@@ -24,20 +24,16 @@ const requiredPartyFields = {
   domicilio: 'Seleccione el distrito.',
   familyStatus: 'Seleccione el estado familiar.',
   nationality: 'Ingrese la nacionalidad.',
-  birthPlace: 'Ingrese el lugar de nacimiento.',
+  birthCountry: 'Ingrese el país de nacimiento.',
   identityType: 'Ingrese el tipo de identificación.',
   motherName: 'Ingrese los nombres de la madre.',
   motherLastName: 'Ingrese los apellidos de la madre.',
   motherJob: 'Ingrese la profesión u oficio de la madre.',
-  motherState: 'Seleccione el departamento de la madre.',
-  motherMunicipality: 'Seleccione el municipio de la madre.',
-  motherSettlement: 'Seleccione el distrito de la madre.',
+  motherCountry: 'Ingrese el país de domicilio de la madre.',
   fatherName: 'Ingrese los nombres del padre.',
   fatherLastName: 'Ingrese los apellidos del padre.',
   fatherJob: 'Ingrese la profesión u oficio del padre.',
-  fatherState: 'Seleccione el departamento del padre.',
-  fatherMunicipality: 'Seleccione el municipio del padre.',
-  fatherSettlement: 'Seleccione el distrito del padre.',
+  fatherCountry: 'Ingrese el país de domicilio del padre.',
   birthCertificateNumber: 'Ingrese el número de partida.',
   birthCertificateRegistry: 'Ingrese el registro que expidió la partida.',
   birthCertificateIssueDate: 'Seleccione la fecha de expedición.',
@@ -68,8 +64,49 @@ const normalizeDocument = (value) =>
     .toLocaleUpperCase()
     .replace(/[^A-ZÁÉÍÓÚÜÑ0-9]/g, '');
 
+const requirePlace = (
+  errors,
+  party,
+  prefix,
+  fieldPrefix,
+  label,
+  foreignField
+) => {
+  if (party[`${fieldPrefix}Country`] === 'El Salvador') {
+    [
+      [`${fieldPrefix}State`, `Seleccione el departamento ${label}.`],
+      [`${fieldPrefix}Municipality`, `Seleccione el municipio ${label}.`],
+      [`${fieldPrefix}Settlement`, `Seleccione el distrito ${label}.`],
+    ].forEach(([field, message]) => {
+      if (!String(party[field] ?? '').trim())
+        errors[`${prefix}.${field}`] = message;
+    });
+    return;
+  }
+
+  if (!String(party[foreignField] ?? '').trim())
+    errors[`${prefix}.${foreignField}`] = `Ingrese la localidad ${label}.`;
+};
+
 const validateParty = (errors, party, prefix, premaritalDate) => {
   setRequired(errors, prefix, party, requiredPartyFields);
+  requirePlace(errors, party, prefix, 'birth', 'de nacimiento', 'birthPlace');
+  requirePlace(
+    errors,
+    party,
+    prefix,
+    'mother',
+    'de domicilio de la madre',
+    'motherSettlement'
+  );
+  requirePlace(
+    errors,
+    party,
+    prefix,
+    'father',
+    'de domicilio del padre',
+    'fatherSettlement'
+  );
   const age = ageAt(party.fecha_nacimiento, premaritalDate);
   if (age !== null && age < 18)
     errors[`${prefix}.fecha_nacimiento`] =

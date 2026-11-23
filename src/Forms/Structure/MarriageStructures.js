@@ -1,4 +1,5 @@
 import Alert from '@mui/material/Alert';
+import Autocomplete from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -18,6 +19,7 @@ import {
   ProgressiveFieldGroup,
 } from './FormScaffold';
 import DateField from './DateField';
+import PersonCoreGroups, { DUI_IDENTITY_TYPE } from './PersonCoreGroups';
 
 const actions = (back) => [
   { type: 'button', text: 'Atrás', variant: 'outlined', action: back },
@@ -54,6 +56,29 @@ const IDENTITY_TYPES = [
   'Pasaporte',
   'Carné de residente',
 ];
+
+const COUNTRY_OPTIONS = [
+  'El Salvador',
+  'Guatemala',
+  'Honduras',
+  'Nicaragua',
+  'Costa Rica',
+  'Panamá',
+  'México',
+  'Estados Unidos',
+  'Canadá',
+  'España',
+];
+
+const placeComplete = (values, prefix, foreignField) =>
+  values[`${prefix}Country`] === 'El Salvador'
+    ? valuesComplete(values, [
+        `${prefix}Country`,
+        `${prefix}State`,
+        `${prefix}Municipality`,
+        `${prefix}Settlement`,
+      ])
+    : valuesComplete(values, [`${prefix}Country`, foreignField]);
 
 const SectionErrors = ({ errors = {}, prefixes = [] }) => {
   const messages = [
@@ -477,6 +502,139 @@ const PersonFields = ({
   );
 };
 
+const PlaceFields = ({
+  values,
+  setValues,
+  prefix,
+  countryLabel,
+  foreignLabel,
+  foreignField = `${prefix}Settlement`,
+  errors,
+  errorPrefix,
+}) => {
+  const field = (suffix) => `${prefix}${suffix}`;
+  const country = values[field('Country')];
+  const state = values[field('State')];
+  const municipality = values[field('Municipality')];
+  const municipalities = Object.keys(DataTerritorialDivision[state] || {});
+  const districts = DataTerritorialDivision[state]?.[municipality] || [];
+  const setCountry = (value) =>
+    setValues((current) => ({
+      ...current,
+      [field('Country')]: value,
+      [field('State')]: '',
+      [field('Municipality')]: '',
+      [field('Settlement')]: '',
+      [foreignField]: '',
+    }));
+
+  return (
+    <>
+      <Grid size={12}>
+        <Autocomplete
+          freeSolo
+          options={COUNTRY_OPTIONS}
+          value={country || ''}
+          onChange={(event, value) => setCountry(value || '')}
+          onInputChange={(event, value, reason) => {
+            if (reason === 'input' || reason === 'clear') setCountry(value);
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              fullWidth
+              required
+              label={countryLabel}
+              {...errorProps(errors, `${errorPrefix}.${field('Country')}`)}
+            />
+          )}
+        />
+      </Grid>
+      {country === 'El Salvador' ? (
+        <>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <TextField
+              fullWidth
+              required
+              select
+              label="Departamento"
+              value={state}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  [field('State')]: event.target.value,
+                  [field('Municipality')]: '',
+                  [field('Settlement')]: '',
+                }))
+              }
+              {...errorProps(errors, `${errorPrefix}.${field('State')}`)}
+            >
+              {Object.keys(DataTerritorialDivision).map((option) => (
+                <MenuItem value={option} key={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <TextField
+              fullWidth
+              required
+              select
+              disabled={!state}
+              label="Municipio"
+              value={municipality}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  [field('Municipality')]: event.target.value,
+                  [field('Settlement')]: '',
+                }))
+              }
+              {...errorProps(errors, `${errorPrefix}.${field('Municipality')}`)}
+            >
+              {municipalities.map((option) => (
+                <MenuItem value={option} key={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <TextField
+              fullWidth
+              required
+              select
+              disabled={!municipality}
+              label="Distrito"
+              value={values[field('Settlement')]}
+              onChange={update(setValues, field('Settlement'))}
+              {...errorProps(errors, `${errorPrefix}.${field('Settlement')}`)}
+            >
+              {districts.map((option) => (
+                <MenuItem value={option} key={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+        </>
+      ) : (
+        <Grid size={12}>
+          <TextField
+            fullWidth
+            required
+            label={foreignLabel}
+            value={values[foreignField]}
+            onChange={update(setValues, foreignField)}
+            {...errorProps(errors, `${errorPrefix}.${foreignField}`)}
+          />
+        </Grid>
+      )}
+    </>
+  );
+};
+
 const ParentFields = ({
   values,
   setValues,
@@ -486,11 +644,6 @@ const ParentFields = ({
   errorPrefix,
 }) => {
   const field = (suffix) => `${prefix}${suffix}`;
-  const state = values[field('State')];
-  const municipality = values[field('Municipality')];
-  const municipalities = Object.keys(DataTerritorialDivision[state] || {});
-  const districts = DataTerritorialDivision[state]?.[municipality] || [];
-
   return (
     <>
       <Grid size={12}>
@@ -523,72 +676,15 @@ const ParentFields = ({
           {...errorProps(errors, `${errorPrefix}.${field('Job')}`)}
         />
       </Grid>
-      <Grid size={{ xs: 12, sm: 4 }}>
-        <TextField
-          fullWidth
-          required
-          select
-          label="Departamento"
-          value={state}
-          onChange={(event) =>
-            setValues((current) => ({
-              ...current,
-              [field('State')]: event.target.value,
-              [field('Municipality')]: '',
-              [field('Settlement')]: '',
-            }))
-          }
-          {...errorProps(errors, `${errorPrefix}.${field('State')}`)}
-        >
-          {Object.keys(DataTerritorialDivision).map((option) => (
-            <MenuItem value={option} key={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Grid>
-      <Grid size={{ xs: 12, sm: 4 }}>
-        <TextField
-          fullWidth
-          required
-          select
-          disabled={!state}
-          label="Municipio"
-          value={municipality}
-          onChange={(event) =>
-            setValues((current) => ({
-              ...current,
-              [field('Municipality')]: event.target.value,
-              [field('Settlement')]: '',
-            }))
-          }
-          {...errorProps(errors, `${errorPrefix}.${field('Municipality')}`)}
-        >
-          {municipalities.map((option) => (
-            <MenuItem value={option} key={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Grid>
-      <Grid size={{ xs: 12, sm: 4 }}>
-        <TextField
-          fullWidth
-          required
-          select
-          disabled={!municipality}
-          label="Distrito"
-          value={values[field('Settlement')]}
-          onChange={update(setValues, field('Settlement'))}
-          {...errorProps(errors, `${errorPrefix}.${field('Settlement')}`)}
-        >
-          {districts.map((option) => (
-            <MenuItem value={option} key={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Grid>
+      <PlaceFields
+        values={values}
+        setValues={setValues}
+        prefix={prefix}
+        countryLabel={`País de domicilio de ${title.toLocaleLowerCase()}`}
+        foreignLabel="Ciudad, estado o localidad de domicilio"
+        errors={errors}
+        errorPrefix={errorPrefix}
+      />
     </>
   );
 };
@@ -606,7 +702,9 @@ export function MarriagePartyStructure({
   onBack,
   onNext,
 }) {
-  const [activeGroup, setActiveGroup] = useState('personal');
+  const [activeGroup, setActiveGroup] = useState(
+    people.length > 0 ? 'saved' : 'identity'
+  );
   const submit = async (event) => {
     event.preventDefault();
     if (!onValidate()) return;
@@ -621,93 +719,110 @@ export function MarriagePartyStructure({
         description="Datos personales, filiación y documentos del expediente."
       />
       <SectionErrors errors={errors} prefixes={[`${errorPrefix}.`]} />
+      <PersonCoreGroups
+        values={values}
+        people={people}
+        activeGroup={activeGroup}
+        onSelectGroup={setActiveGroup}
+        allowAlternativeIdentity
+        onChange={(field, value) =>
+          setValues((current) => ({
+            ...current,
+            [field]: value,
+            ...(field === 'fecha_nacimiento' ? { edad: GetAge(value) } : {}),
+          }))
+        }
+        onLoadPerson={(person) =>
+          setValues((current) => ({
+            ...current,
+            ...person,
+            identityType: DUI_IDENTITY_TYPE,
+            documento: formatDui(person.documento),
+            edad: GetAge(person.fecha_nacimiento),
+          }))
+        }
+        getError={(field) => errors[`${errorPrefix}.${field}`]}
+      />
       <ProgressiveFieldGroup
-        id="personal"
-        title="Datos personales"
-        expanded={activeGroup === 'personal'}
+        id="civil"
+        title="Datos civiles"
+        description="Complete los datos que forman parte del expediente matrimonial."
+        accent="#52766e"
+        expanded={activeGroup === 'civil'}
         onSelect={setActiveGroup}
         errorCount={prefixErrorCount(errors, [
-          `${errorPrefix}.nombre`,
-          `${errorPrefix}.apellido`,
-          `${errorPrefix}.fecha_nacimiento`,
-          `${errorPrefix}.genero`,
           `${errorPrefix}.familyStatus`,
           `${errorPrefix}.nationality`,
-          `${errorPrefix}.oficio`,
+          `${errorPrefix}.birthCountry`,
+          `${errorPrefix}.birthState`,
+          `${errorPrefix}.birthMunicipality`,
+          `${errorPrefix}.birthSettlement`,
           `${errorPrefix}.birthPlace`,
-        ])}
-        complete={valuesComplete(values, [
-          'nombre',
-          'apellido',
-          'fecha_nacimiento',
-          'genero',
-          'familyStatus',
-          'nationality',
-          'oficio',
-          'birthPlace',
-        ])}
-      >
-        <Grid container spacing={2}>
-          <PersonFields
-            values={values}
-            setValues={setValues}
-            people={people}
-            identityFlexible
-            partyDetails
-            errors={errors}
-            errorPrefix={errorPrefix}
-            section="personal"
-          />
-        </Grid>
-      </ProgressiveFieldGroup>
-      <ProgressiveFieldGroup
-        id="identification"
-        title="Identificación"
-        expanded={activeGroup === 'identification'}
-        onSelect={setActiveGroup}
-        errorCount={prefixErrorCount(errors, [
-          `${errorPrefix}.identityType`,
-          `${errorPrefix}.documento`,
           `${errorPrefix}.familyStatusDocument`,
         ])}
-        complete={valuesComplete(values, ['identityType', 'documento'])}
+        complete={
+          valuesComplete(values, [
+            'familyStatus',
+            'nationality',
+            ...(['DIVORCED', 'WIDOWED'].includes(values.familyStatus)
+              ? ['familyStatusDocument']
+              : []),
+          ]) && placeComplete(values, 'birth', 'birthPlace')
+        }
       >
         <Grid container spacing={2}>
-          <PersonFields
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              fullWidth
+              required
+              select
+              label="Estado familiar"
+              value={values.familyStatus}
+              onChange={update(setValues, 'familyStatus')}
+              {...errorProps(errors, `${errorPrefix}.familyStatus`)}
+            >
+              <MenuItem value="SINGLE">Soltero</MenuItem>
+              <MenuItem value="DIVORCED">Divorciado</MenuItem>
+              <MenuItem value="WIDOWED">Viudo</MenuItem>
+              <MenuItem value="MARRIED">Casado con vínculo vigente</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              fullWidth
+              required
+              label="Nacionalidad"
+              value={values.nationality}
+              onChange={update(setValues, 'nationality')}
+              {...errorProps(errors, `${errorPrefix}.nationality`)}
+            />
+          </Grid>
+          <PlaceFields
             values={values}
             setValues={setValues}
-            identityFlexible
-            partyDetails
+            prefix="birth"
+            countryLabel="País de nacimiento"
+            foreignLabel="Ciudad, estado o localidad de nacimiento"
+            foreignField="birthPlace"
             errors={errors}
             errorPrefix={errorPrefix}
-            section="identification"
           />
-        </Grid>
-      </ProgressiveFieldGroup>
-      <ProgressiveFieldGroup
-        id="domicile"
-        title="Domicilio"
-        expanded={activeGroup === 'domicile'}
-        onSelect={setActiveGroup}
-        errorCount={prefixErrorCount(errors, [
-          `${errorPrefix}.departamento`,
-          `${errorPrefix}.municipio`,
-          `${errorPrefix}.domicilio`,
-        ])}
-        complete={valuesComplete(values, [
-          'departamento',
-          'municipio',
-          'domicilio',
-        ])}
-      >
-        <Grid container spacing={2}>
-          <PersonFields
-            values={values}
-            setValues={setValues}
-            errors={errors}
-            errorPrefix={errorPrefix}
-            section="domicile"
-          />
+          {['DIVORCED', 'WIDOWED'].includes(values.familyStatus) && (
+            <Grid size={12}>
+              <TextField
+                fullWidth
+                required
+                label={
+                  values.familyStatus === 'DIVORCED'
+                    ? 'Certificación de divorcio o sentencia de nulidad'
+                    : 'Certificación de defunción del cónyuge anterior'
+                }
+                value={values.familyStatusDocument}
+                onChange={update(setValues, 'familyStatusDocument')}
+                {...errorProps(errors, `${errorPrefix}.familyStatusDocument`)}
+              />
+            </Grid>
+          )}
         </Grid>
       </ProgressiveFieldGroup>
       <ProgressiveFieldGroup
@@ -719,20 +834,18 @@ export function MarriagePartyStructure({
           `${errorPrefix}.mother`,
           `${errorPrefix}.father`,
         ])}
-        complete={valuesComplete(values, [
-          'motherName',
-          'motherLastName',
-          'motherJob',
-          'motherState',
-          'motherMunicipality',
-          'motherSettlement',
-          'fatherName',
-          'fatherLastName',
-          'fatherJob',
-          'fatherState',
-          'fatherMunicipality',
-          'fatherSettlement',
-        ])}
+        complete={
+          valuesComplete(values, [
+            'motherName',
+            'motherLastName',
+            'motherJob',
+            'fatherName',
+            'fatherLastName',
+            'fatherJob',
+          ]) &&
+          placeComplete(values, 'mother', 'motherSettlement') &&
+          placeComplete(values, 'father', 'fatherSettlement')
+        }
       >
         <Grid container spacing={2}>
           <ParentFields

@@ -66,4 +66,24 @@ describe('marriage client rules', () => {
     state.partyOne.identityType = 'Documento consular';
     expect(validateMarriageFields(state)['partyOne.documento']).toBeUndefined();
   });
+
+  it('accepts foreign birthplaces and parent domiciles without Salvadoran divisions', () => {
+    const state = validMarriageState();
+    state.partyOne.birthCountry = 'Estados Unidos';
+    state.partyOne.birthState = '';
+    state.partyOne.birthMunicipality = '';
+    state.partyOne.birthSettlement = '';
+    state.partyOne.birthPlace = 'Los Ángeles, California';
+    state.partyOne.motherCountry = 'Guatemala';
+    state.partyOne.motherState = '';
+    state.partyOne.motherMunicipality = '';
+    state.partyOne.motherSettlement = 'Ciudad de Guatemala';
+
+    const errors = validateMarriageFields(state);
+
+    expect(errors['partyOne.birthState']).toBeUndefined();
+    expect(errors['partyOne.motherState']).toBeUndefined();
+    expect(errors['partyOne.birthPlace']).toBeUndefined();
+    expect(errors['partyOne.motherSettlement']).toBeUndefined();
+  });
 });

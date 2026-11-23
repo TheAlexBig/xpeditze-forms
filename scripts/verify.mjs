@@ -6,6 +6,7 @@ import path from 'node:path';
 
 const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const stages = [
+  { name: 'ESLint autofix', command: 'npm', args: ['run', 'lint:fix'] },
   {
     name: 'Pruebas',
     command: 'npm',

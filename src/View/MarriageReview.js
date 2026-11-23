@@ -29,19 +29,26 @@ const familyStatus = (party) => {
     ? label.replace(/o$/, 'a')
     : label;
 };
+const structuredPlace = (party, prefix, foreignField) =>
+  party[`${prefix}Country`] === 'El Salvador'
+    ? [
+        party[`${prefix}Settlement`],
+        party[`${prefix}Municipality`],
+        party[`${prefix}State`],
+        'El Salvador',
+      ]
+        .filter(Boolean)
+        .join(', ')
+    : [party[foreignField], party[`${prefix}Country`]]
+        .filter(Boolean)
+        .join(', ');
 const parent = (party, prefix) =>
   [
     [party[`${prefix}Name`], party[`${prefix}LastName`]]
       .filter(Boolean)
       .join(' '),
     party[`${prefix}Job`],
-    [
-      party[`${prefix}Settlement`],
-      party[`${prefix}Municipality`],
-      party[`${prefix}State`],
-    ]
-      .filter(Boolean)
-      .join(', '),
+    structuredPlace(party, prefix, `${prefix}Settlement`),
   ]
     .filter(Boolean)
     .join(' · ');
@@ -53,7 +60,7 @@ const partyGroups = (party) => [
       ['Fecha de nacimiento', date(party.fecha_nacimiento)],
       ['Edad', party.edad && `${party.edad} años`],
       ['Género', party.genero],
-      ['Lugar de nacimiento', party.birthPlace],
+      ['Lugar de nacimiento', structuredPlace(party, 'birth', 'birthPlace')],
       ['Nacionalidad', party.nationality],
       ['Estado familiar', familyStatus(party)],
       ['Oficio', party.oficio],

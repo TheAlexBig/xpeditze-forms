@@ -18,6 +18,7 @@ describe('marriage payload', () => {
     expect(payload.contrayente_uno.madre).toEqual({
       nombre: 'María Prueba',
       oficio: 'Comerciante',
+      pais: 'El Salvador',
       departamento: 'San Salvador',
       domicilio: 'San Salvador, Municipio de San Salvador Centro',
     });
@@ -39,6 +40,33 @@ describe('marriage payload', () => {
     );
     expect(payload.contrayente_uno.persona.documento).toBe(
       'SV-A/ DOS CERO CUATRO OCHO'
+    );
+  });
+
+  it('builds structured Salvadoran birthplaces and foreign parent domiciles', () => {
+    const state = validMarriageState();
+    state.partyOne.motherCountry = 'Guatemala';
+    state.partyOne.motherState = '';
+    state.partyOne.motherMunicipality = '';
+    state.partyOne.motherSettlement = 'Ciudad de Guatemala';
+    state.partyTwo.birthCountry = 'Estados Unidos';
+    state.partyTwo.birthState = '';
+    state.partyTwo.birthMunicipality = '';
+    state.partyTwo.birthSettlement = '';
+    state.partyTwo.birthPlace = 'Los Ángeles, California';
+
+    const payload = createMarriagePayload(state);
+
+    expect(payload.contrayente_uno.lugar_nacimiento).toBe(
+      'San Salvador, Municipio de San Salvador Centro, departamento de San Salvador, El Salvador'
+    );
+    expect(payload.contrayente_uno.madre).toMatchObject({
+      pais: 'Guatemala',
+      departamento: '',
+      domicilio: 'Ciudad de Guatemala',
+    });
+    expect(payload.contrayente_dos.lugar_nacimiento).toBe(
+      'Los Ángeles, California, Estados Unidos'
     );
   });
 });

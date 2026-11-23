@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Autocomplete from '@mui/material/Autocomplete';
-import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
@@ -24,7 +23,7 @@ import {
   FormHeading,
   ProgressiveFieldGroup,
 } from './FormScaffold';
-import DateField from './DateField';
+import PersonCoreGroups from './PersonCoreGroups';
 
 const fieldProps = (name, values, touched, errors) => ({
   error: Boolean(touched[name] && errors[name]),
@@ -33,15 +32,6 @@ const fieldProps = (name, values, touched, errors) => ({
   value: values[name] ?? '',
   fullWidth: true,
 });
-
-const personLabel = (person) =>
-  [
-    [person.nombre, person.apellido].filter(Boolean).join(' '),
-    person.documento,
-    person.oficio,
-  ]
-    .filter(Boolean)
-    .join(' / ');
 
 const personSummary = (values) => [
   {
@@ -58,8 +48,6 @@ const isExcludedDui = (excludedDui, value) =>
     .filter(Boolean)
     .includes(normalizeDui(value));
 
-const identityFields = ['nombre', 'apellido', 'fecha_nacimiento', 'genero'];
-const documentFields = ['documento', 'departamento', 'municipio', 'domicilio'];
 const companyFields = [
   'sociedad_nombre',
   'sociedad_nacionalidad',
@@ -194,286 +182,25 @@ const PersonStructure = ({
               {error}
             </Alert>
           )}
-          {people.length > 0 && (
-            <ProgressiveFieldGroup
-              id="saved"
-              title="Persona guardada"
-              description="Busque por nombre, DUI u oficio para reutilizar datos anteriores."
-              accent="#17695d"
-              expanded={activeGroup === 'saved'}
-              onSelect={setActiveGroup}
-              optional
-            >
-              <Autocomplete
-                options={people}
-                getOptionLabel={personLabel}
-                isOptionEqualToValue={(option, value) =>
-                  normalizeDui(option.documento) ===
-                  normalizeDui(value.documento)
-                }
-                onChange={(event, person) => {
-                  if (person) {
-                    setValues({
-                      ...data,
-                      ...person,
-                      documento: formatDui(person.documento),
-                    });
-                    setActiveGroup('identity');
-                  }
-                }}
-                renderOption={(props, person) => (
-                  <Box
-                    component="li"
-                    {...props}
-                    key={normalizeDui(person.documento)}
-                  >
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography fontWeight={650} variant="body2">
-                        {[person.nombre, person.apellido]
-                          .filter(Boolean)
-                          .join(' ')}
-                      </Typography>
-                      <Typography color="text.secondary" variant="caption">
-                        {person.documento} / {person.oficio}
-                      </Typography>
-                    </Box>
-                  </Box>
-                )}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    fullWidth
-                    label="Buscar persona guardada"
-                  />
-                )}
-              />
-            </ProgressiveFieldGroup>
-          )}
-          <ProgressiveFieldGroup
-            id="identity"
-            title="Identidad personal"
-            accent="#2f7c70"
-            complete={fieldsAreComplete(values, identityFields)}
-            errorCount={countFieldErrors(
-              errors,
-              identityFields,
-              touched,
-              submitCount > 0
-            )}
-            expanded={activeGroup === 'identity'}
-            onSelect={setActiveGroup}
-          >
-            <Grid container spacing={2}>
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                }}
-              >
-                <TextField
-                  {...fieldProps('nombre', values, touched, errors)}
-                  label="Nombres"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                }}
-              >
-                <TextField
-                  {...fieldProps('apellido', values, touched, errors)}
-                  label="Apellidos"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                }}
-              >
-                <DateField
-                  {...fieldProps('fecha_nacimiento', values, touched, errors)}
-                  label="Fecha de nacimiento"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                }}
-              >
-                <TextField
-                  {...fieldProps('genero', values, touched, errors)}
-                  label="Género"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  select
-                >
-                  <MenuItem value="Femenino">Femenino</MenuItem>
-                  <MenuItem value="Masculino">Masculino</MenuItem>
-                </TextField>
-              </Grid>
-            </Grid>
-          </ProgressiveFieldGroup>
-          <ProgressiveFieldGroup
-            id="documents"
-            title="Documentos y domicilio"
-            description="El DUI y la división territorial vigente se incorporarán al contrato."
-            accent="#8a6540"
-            complete={fieldsAreComplete(values, documentFields)}
-            errorCount={countFieldErrors(
-              errors,
-              documentFields,
-              touched,
-              submitCount > 0
-            )}
-            expanded={activeGroup === 'documents'}
-            onSelect={setActiveGroup}
-          >
-            <Grid container spacing={2}>
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                }}
-              >
-                <TextField
-                  {...fieldProps('documento', values, touched, errors)}
-                  label="DUI"
-                  onBlur={handleBlur}
-                  onChange={(event) => {
-                    setFieldValue('documento', formatDui(event.target.value));
-                  }}
-                  placeholder="00000000-0"
-                  slotProps={{
-                    htmlInput: {
-                      inputMode: 'numeric',
-                      maxLength: 10,
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                }}
-              >
-                <TextField
-                  {...fieldProps('departamento', values, touched, errors)}
-                  label="Departamento"
-                  onBlur={handleBlur}
-                  onChange={(event) => {
-                    handleChange(event);
-                    setFieldValue('municipio', '');
-                    setFieldValue('domicilio', '');
-                  }}
-                  select
-                >
-                  {Object.keys(DataTerritorialDivision).map((option) => (
-                    <MenuItem value={option} key={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                }}
-              >
-                <TextField
-                  {...fieldProps('municipio', values, touched, errors)}
-                  disabled={!values.departamento}
-                  label="Municipio"
-                  onBlur={handleBlur}
-                  onChange={(event) => {
-                    handleChange(event);
-                    setFieldValue('domicilio', '');
-                  }}
-                  select
-                >
-                  {Object.keys(
-                    DataTerritorialDivision[values.departamento] || {}
-                  ).map((option) => (
-                    <MenuItem value={option} key={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                }}
-              >
-                <TextField
-                  {...fieldProps('domicilio', values, touched, errors)}
-                  disabled={!values.municipio}
-                  label="Distrito"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  select
-                >
-                  {(
-                    DataTerritorialDivision[values.departamento]?.[
-                      values.municipio
-                    ] || []
-                  ).map((option) => (
-                    <MenuItem value={option} key={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-            </Grid>
-          </ProgressiveFieldGroup>
-          <ProgressiveFieldGroup
-            id="activity"
-            title="Actividad"
-            accent="#b37d24"
-            complete={fieldsAreComplete(values, ['oficio'])}
-            errorCount={countFieldErrors(
-              errors,
-              ['oficio'],
-              touched,
-              submitCount > 0
-            )}
-            expanded={activeGroup === 'activity'}
-            onSelect={setActiveGroup}
-          >
-            <Autocomplete
-              freeSolo
-              inputValue={values.oficio || ''}
-              onChange={(event, newValue) => {
-                setFieldValue('oficio', newValue || '');
-              }}
-              onInputChange={(event, newInputValue) => {
-                setFieldValue('oficio', newInputValue);
-              }}
-              options={occupations}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  error={Boolean(touched.oficio && errors.oficio)}
-                  fullWidth
-                  helperText={touched.oficio && errors.oficio}
-                  label="Oficio o profesión"
-                  name="oficio"
-                  onBlur={handleBlur}
-                />
-              )}
-            />
-          </ProgressiveFieldGroup>
+          <PersonCoreGroups
+            values={values}
+            people={people}
+            occupations={occupations}
+            activeGroup={activeGroup}
+            onSelectGroup={setActiveGroup}
+            onChange={setFieldValue}
+            onBlur={handleBlur}
+            onLoadPerson={(person) =>
+              setValues({
+                ...data,
+                ...person,
+                documento: formatDui(person.documento),
+              })
+            }
+            getError={(field) =>
+              (submitCount > 0 || touched[field]) && errors[field]
+            }
+          />
           <ProgressiveFieldGroup
             id="representation"
             title="Representación de sociedad"
